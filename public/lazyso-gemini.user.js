@@ -1,12 +1,16 @@
 // ==UserScript==
 // @name         Gemini 去水印神器 (LazySo Edition)
 // @namespace    https://clean.lazyso.com/
-// @version      1.0.1
-// @description  一键移除 Google Gemini 生成图片的右下角水印 (LazySo 独家提供)
-// @author       LazySo
+// @version      0.1.6
+// @description  Automatically removes watermarks from Gemini AI generated images
+// @description:zh-CN 自动移除 Gemini AI 生成图像中的水印
+// @icon         https://www.google.com/s2/favicons?domain=gemini.google.com
+// @author       journey-ad
+// @license      MIT
 // @match        https://gemini.google.com/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=gemini.google.com
-// @grant        none
+// @connect      googleusercontent.com
+// @grant        GM_xmlhttpRequest
+// @run-at       document-end
 // ==/UserScript==
 
 (() => {
