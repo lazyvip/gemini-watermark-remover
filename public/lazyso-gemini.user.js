@@ -9,7 +9,6 @@
 // @grant        none
 // ==/UserScript==
 
-
 (() => {
   // src/core/alphaMap.js
   function calculateAlphaMap(bgCaptureImageData) {
