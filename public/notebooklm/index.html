@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LazyCut - NotebookLM 去水印工具 | 免费在线去水印</title>
+    <meta name="description" content="LazyCut NotebookLM 去水印工具 - 专为 NotebookLM 导出的文档设计，支持图片和 PDF 去水印。完全浏览器本地处理，保护隐私，免费极速。">
+    <meta name="keywords" content="NotebookLM去水印, PDF去水印, 图片去水印, LazyCut, LazySo, 免费工具, 本地处理">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lazyso.com/notebooklm/">
+    <meta property="og:title" content="LazyCut - NotebookLM 去水印工具">
+    <meta property="og:description" content="专为 NotebookLM 导出的文档设计，支持图片和 PDF 去水印。完全浏览器本地处理，保护隐私。">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="LazyCut - NotebookLM 去水印工具">
+    <meta property="twitter:description" content="专为 NotebookLM 导出的文档设计，支持图片和 PDF 去水印。完全浏览器本地处理，保护隐私。">
+    
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        'primary-hover': '#2563EB',
+                        dark: '#0f0f11',
+                        'lazy-dark': '#0f0f11',
+                        'lazy-card': '#27272a',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 引入依赖 -->
+    <script src="/notebooklm/libs/vue.global.js"></script>
+    <script src="/notebooklm/libs/ffmpeg.js"></script>
+    <script src="/notebooklm/libs/ffmpeg-util.js"></script>
+    
+    <link rel="stylesheet" href="/notebooklm/style.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #3B82F6; border-radius: 4px; }
+        
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #3B82F6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-lazy-dark text-gray-200 antialiased selection:bg-primary selection:text-white flex flex-col min-h-screen">
+    <div id="app" v-cloak>
+        <header class="sticky top-0 z-50 bg-lazy-dark/90 backdrop-blur-md border-b border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <svg class="h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <h1 class="text-sm font-bold tracking-tight text-primary md:text-xl">
+                        <a href="/" class="hover:text-primary transition-colors">LazyCut <span class="text-gray-200 font-medium">去水印工具</span></a>
+                    </h1>
+                </div>
+                <nav class="flex gap-4 items-center">
+                    <a href="https://lazyso.com" class="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-sm transition-all text-white group text-sm font-medium">
+                        <span>👈</span>
+                        <span>回到 LazySo 主站</span>
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 py-8 w-full">
+            <section class="text-center mb-12">
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">NotebookLM 水印去除工具</h2>
+                <p class="text-gray-400 text-lg">完全本地处理，保护您的文档隐私</p>
+            </section>
+
+            <!-- Tabs -->
+            <div class="flex justify-center mb-8">
+                <nav class="inline-flex p-1 bg-white/5 rounded-xl border border-white/10">
+                    <button 
+                        v-for="tab in ['image', 'pdf']" 
+                        :key="tab"
+                        @click="switchTab(tab)"
+                        :class="[
+                            'px-6 py-2 rounded-lg text-sm font-medium transition-all',
+                            currentTab === tab ? 'bg-primary text-white shadow-lg' : 'text-gray-400 hover:text-white'
+                        ]"
+                    >
+                        {{ tab === 'image' ? '图片去水印' : 'PDF 去水印' }}
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Upload Area -->
+            <div class="max-w-4xl mx-auto bg-lazy-card rounded-2xl shadow-soft p-3 border border-white/5 mb-12">
+                <div 
+                    v-if="!hasFile"
+                    @dragover.prevent 
+                    @drop.prevent="handleDrop" 
+                    @click="triggerUpload"
+                    class="group relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-white/10 rounded-xl bg-white/5 hover:bg-white/10 hover:border-primary/50 transition-all cursor-pointer"
+                >
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                        </div>
+                        <p class="mb-2 text-lg font-medium text-gray-200">点击上传 或 拖拽 {{ tabName }} 到此处</p>
+                        <p class="text-sm text-gray-500">
+                            {{ currentTab === 'image' ? '支持 PNG, JPEG, WebP' : '支持 PDF 文件' }}
+                        </p>
+                    </div>
+                    <input type="file" ref="fileInput" @change="handleFileChange" :accept="acceptTypes" :multiple="currentTab !== 'pdf'" hidden>
+                </div>
+
+                <!-- PDF Workspace -->
+                <div v-else-if="currentTab === 'pdf'" class="p-4">
+                    <div class="flex flex-wrap gap-3 mb-6 justify-center">
+                        <button class="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-xl font-medium transition-all disabled:opacity-50" @click="processCurrentPage" :disabled="isProcessing">去除当前内容水印</button>
+                        <button class="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-xl font-medium transition-all disabled:opacity-50" @click="processAllPages" :disabled="isProcessing">去除全部内容水印 ({{ totalPages }})</button>
+                        <button class="px-6 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl font-medium transition-all" @click="toggleViewMode">
+                            {{ showProcessed ? '显示原文件' : '显示处理后' }}
+                        </button>
+                        <button class="px-6 py-2.5 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 rounded-xl font-medium transition-all" @click="clearAll">清除全部</button>
+                    </div>
+
+                    <div class="flex items-center justify-center gap-4 mb-6">
+                        <button class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 disabled:opacity-30" @click="prevPage" :disabled="currentPage <= 1 || isProcessing">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <span class="text-lg font-bold text-white">{{ currentPage }} / {{ totalPages }}</span>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 disabled:opacity-30" @click="nextPage" :disabled="currentPage >= totalPages || isProcessing">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+
+                    <div class="relative bg-black/40 rounded-xl overflow-hidden border border-white/10 flex justify-center p-4">
+                        <canvas ref="pdfCanvas" class="max-w-full shadow-2xl"></canvas>
+                        <div v-if="isProcessing" class="absolute inset-0 bg-lazy-dark/80 backdrop-blur-sm flex flex-col items-center justify-center">
+                            <div class="loading-spinner mb-4"></div>
+                            <p class="text-primary font-bold">处理中... {{ processProgress }}%</p>
+                        </div>
+                    </div>
+
+                    <div v-if="processedPdfUrl" class="mt-8 flex justify-center">
+                        <a :href="processedPdfUrl" :download="downloadName" class="px-8 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold shadow-lg transition-all flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            下载处理后的 PDF
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Image/Video List -->
+                <div v-else class="p-4">
+                    <div class="flex justify-end gap-3 mb-6">
+                        <button class="px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-400 hover:text-white rounded-lg transition-all" @click="clearAll">清除全部</button>
+                        <button class="px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-bold transition-all disabled:opacity-50" @click="processAll" :disabled="isProcessing">开始处理</button>
+                    </div>
+
+                    <div class="grid gap-6">
+                        <div v-for="(file, index) in files" :key="index" class="bg-white/5 border border-white/10 rounded-xl p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-sm font-medium text-gray-300 truncate max-w-xs">{{ file.name }}</span>
+                                <span :class="['px-3 py-1 rounded-full text-xs font-bold', {
+                                    'bg-yellow-500/20 text-yellow-500': file.status === 'pending',
+                                    'bg-blue-500/20 text-blue-500': file.status === 'processing',
+                                    'bg-green-500/20 text-green-500': file.status === 'completed',
+                                    'bg-red-500/20 text-red-500': file.status === 'error'
+                                }]">
+                                    {{ statusText(file.status) }} 
+                                    <span v-if="file.progress > 0 && file.status === 'processing'">({{ file.progress }}%)</span>
+                                </span>
+                            </div>
+                            
+                            <div v-if="file.previewUrl || file.resultUrl" class="grid md:grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">原始文件</p>
+                                    <div class="bg-black/20 rounded-lg overflow-hidden flex items-center justify-center min-h-[200px] border border-white/5">
+                                        <img v-if="file.type === 'image'" :src="file.previewUrl" class="max-h-64 object-contain">
+                                        <video v-if="file.type === 'video'" :src="file.previewUrl" controls class="max-h-64"></video>
+                                    </div>
+                                </div>
+                                <div class="space-y-2" v-if="file.resultUrl">
+                                    <p class="text-xs text-primary font-bold uppercase tracking-wider">处理结果</p>
+                                    <div class="bg-black/20 rounded-lg overflow-hidden flex items-center justify-center min-h-[200px] border border-primary/20 relative">
+                                        <img v-if="file.type === 'image'" :src="file.resultUrl" class="max-h-64 object-contain">
+                                        <video v-else-if="file.type === 'video'" :src="file.resultUrl" controls class="max-h-64"></video>
+                                        
+                                        <div class="absolute bottom-4 right-4">
+                                            <a :href="file.resultUrl" :download="file.downloadName || ('cleaned_' + file.name)" class="w-10 h-10 flex items-center justify-center bg-primary hover:bg-primary-hover text-white rounded-full shadow-lg transition-all">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-8 py-12 border-t border-white/5">
+                <div class="bg-lazy-card p-6 rounded-xl border border-white/5 text-center">
+                    <div class="w-12 h-12 bg-primary/20 text-primary rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h4 class="text-lg font-bold text-white mb-2">隐私安全</h4>
+                    <p class="text-gray-400 text-sm">纯前端运行，图片和文档不离机，绝不上传服务器</p>
+                </div>
+                <div class="bg-lazy-card p-6 rounded-xl border border-white/5 text-center">
+                    <div class="w-12 h-12 bg-green-500/20 text-green-400 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h4 class="text-lg font-bold text-white mb-2">高质量还原</h4>
+                    <p class="text-gray-400 text-sm">智能修复算法，完美去除水印并保留原始细节</p>
+                </div>
+                <div class="bg-lazy-card p-6 rounded-xl border border-white/5 text-center">
+                    <div class="w-12 h-12 bg-purple-500/20 text-purple-400 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h4 class="text-lg font-bold text-white mb-2">极速处理</h4>
+                    <p class="text-gray-400 text-sm">多线程 WASM 加速，大文件也能秒级完成</p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="bg-lazy-card text-gray-500 py-8 border-t border-white/10 text-center">
+            <p class="text-sm">&copy; 2026 LazySo & MarkCut. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

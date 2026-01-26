@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotebookLM 水印去除工具 (本地复刻版)</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- 引入 Vue 3 -->
+    <script src="libs/vue.global.js"></script>
+    <!-- 引入 FFmpeg (Local) -->
+    <script src="libs/ffmpeg.js"></script>
+    <script src="libs/ffmpeg-util.js"></script>
+</head>
+<body>
+    <div id="app" class="container">
+        <header>
+            <h1>NotebookLM 水印去除工具</h1>
+            <p class="subtitle">完全本地处理，保护隐私</p>
+        </header>
+
+        <nav class="tabs">
+            <button :class="{ active: currentTab === 'image' }" @click="switchTab('image')">图片去水印</button>
+            <button :class="{ active: currentTab === 'pdf' }" @click="switchTab('pdf')">PDF 去水印</button>
+            <button :class="{ active: currentTab === 'video' }" @click="switchTab('video')">视频去水印</button>
+        </nav>
+
+        <main>
+            <!-- 通用上传区域 (当没有文件时显示) -->
+            <div class="upload-area" @dragover.prevent @drop.prevent="handleDrop" @click="triggerUpload" v-if="!hasFile">
+                <div class="upload-content">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <p>点击上传或拖拽 {{ tabName }} 到此处</p>
+                    <span class="support-text" v-if="currentTab === 'image'">支持 PNG, JPEG, WebP</span>
+                    <span class="support-text" v-else-if="currentTab === 'pdf'">支持 PDF 文件</span>
+                    <span class="support-text" v-else-if="currentTab === 'video'">支持 MP4 视频</span>
+                </div>
+                <input type="file" ref="fileInput" @change="handleFileChange" :accept="acceptTypes" :multiple="currentTab !== 'pdf'" hidden>
+            </div>
+
+            <!-- PDF 专属界面 -->
+            <div v-else-if="currentTab === 'pdf'" class="pdf-workspace">
+                <div class="pdf-actions">
+                    <button class="btn-pill btn-black" @click="processCurrentPage" :disabled="isProcessing">去除当前内容水印</button>
+                    <button class="btn-pill btn-black" @click="processAllPages" :disabled="isProcessing">去除全部内容水印 ({{ totalPages }})</button>
+                    <button class="btn-pill btn-white" @click="toggleViewMode">
+                        {{ showProcessed ? '显示原文件内容' : '显示处理后内容' }}
+                    </button>
+                    <button class="btn-pill btn-red" @click="clearAll">清除全部</button>
+                </div>
+
+                <div class="pdf-pagination">
+                    <button class="btn-icon" @click="prevPage" :disabled="currentPage <= 1 || isProcessing">&lt;</button>
+                    <span class="page-indicator">{{ currentPage }} / {{ totalPages }}</span>
+                    <button class="btn-icon" @click="nextPage" :disabled="currentPage >= totalPages || isProcessing">&gt;</button>
+                </div>
+
+                <div class="pdf-preview-container">
+                    <div class="canvas-wrapper">
+                        <canvas ref="pdfCanvas"></canvas>
+                        <div v-if="isProcessing" class="loading-overlay">
+                            <div class="spinner"></div>
+                            <p>处理中... {{ processProgress }}%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="processedPdfUrl" class="download-section">
+                     <a :href="processedPdfUrl" :download="downloadName" class="btn btn-primary">下载处理后的 PDF</a>
+                </div>
+            </div>
+
+            <!-- 图片/视频 列表界面 (保持原有逻辑) -->
+            <div class="file-list" v-else>
+                <div class="actions">
+                    <button class="btn btn-secondary" @click="clearAll">清除全部</button>
+                    <button class="btn btn-primary" @click="processAll" :disabled="isProcessing">开始处理</button>
+                </div>
+
+                <div v-for="(file, index) in files" :key="index" class="file-item">
+                    <div class="file-info">
+                        <span class="file-name">{{ file.name }}</span>
+                        <span class="file-status" :class="file.status">
+                            {{ statusText(file.status) }} 
+                            <span v-if="file.progress > 0 && file.status === 'processing'">({{ file.progress }}%)</span>
+                        </span>
+                    </div>
+                    
+                    <div class="preview-area" v-if="file.previewUrl || file.resultUrl">
+                        <div class="preview-box">
+                            <p>原图/预览</p>
+                            <img v-if="file.type === 'image'" :src="file.previewUrl" alt="Original">
+                            <video v-if="file.type === 'video'" :src="file.previewUrl" controls width="300"></video>
+                        </div>
+                        <div class="preview-box" v-if="file.resultUrl">
+                            <p>处理后</p>
+                            <img v-if="file.type === 'image'" :src="file.resultUrl" alt="Processed">
+                            <video v-else-if="file.type === 'video'" :src="file.resultUrl" controls width="300"></video>
+                            
+                            <div style="margin-top: 10px;">
+                                <a :href="file.resultUrl" :download="file.downloadName || ('cleaned_' + file.name)" class="btn-download">下载</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
