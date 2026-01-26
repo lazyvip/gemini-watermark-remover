@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://clean.lazyso.com/sitemap.xml
