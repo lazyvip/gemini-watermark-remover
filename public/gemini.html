@@ -114,10 +114,23 @@
         </h1>
       </div>
       <nav class="flex gap-2 md:gap-6 text-sm font-medium text-gray-400 items-center">
-        <a href="https://lazyso.com" class="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-sm transition-all text-white group">
-          <span>👈</span>
-          <span>回到 LazySo 主站</span>
-        </a>
+        <div class="relative" id="tools-dropdown">
+            <button id="tools-btn" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-sm transition-all text-white text-sm font-medium group">
+                更多工具 <span class="group-hover:rotate-180 transition-transform duration-200">▾</span>
+            </button>
+            <!-- Dropdown Menu -->
+            <div id="tools-menu" class="hidden absolute right-0 mt-2 w-64 rounded-xl bg-[#1a1a1c] border border-white/10 shadow-xl overflow-hidden z-50 transform origin-top-right transition-all duration-200 opacity-0 scale-95">
+                <a href="https://lazyso.com/" class="block px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors flex items-center gap-2">
+                    <span>🏠</span> 回到 LazySo 主站
+                </a>
+                <a href="https://wcnkxg1u4986.feishu.cn/base/UTBDb7vwiap3zmsJwuJctoVPnWx?from=from_copylink" target="_blank" class="block px-4 py-3 text-sm text-[#a78bfa] font-medium hover:bg-white/5 hover:text-[#c4b5fd] transition-colors border-t border-white/5 flex items-center gap-2">
+                    <span>🚀</span> 懒人兵器库 (AI 提示词/资源)
+                </a>
+                <button id="contact-btn" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-t border-white/5 flex items-center gap-2">
+                    <span>💬</span> 联系作者
+                </button>
+            </div>
+        </div>
         <a href="/lazyso-gemini.user.js" target="_blank" style="
             display: inline-flex;
             align-items: center;
@@ -312,6 +325,165 @@
       <p class="text-gray-300 font-medium" data-i18n="loading.text">正在处理...</p>
     </div>
   </div>
+
+    <!-- Contact Modal -->
+    <div id="contact-modal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity opacity-0" id="modal-backdrop"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative min-h-screen flex items-center justify-center p-4">
+            <div class="bg-[#1a1a1c] border border-white/10 rounded-2xl max-w-sm w-full p-6 shadow-2xl transform scale-95 opacity-0 transition-all duration-300" id="modal-content">
+                <!-- Close Button -->
+                <button id="modal-close" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                
+                <h3 class="text-xl font-bold text-white mb-6 text-center">联系作者，获取更多优质工具分享！</h3>
+                    
+                    <div class="bg-white p-1 rounded-xl mb-6 mx-auto w-fit">
+                        <img src="/vx_qrcode.jpg" alt="WeChat QR Code" class="w-64 h-64 object-contain">
+                    </div>
+                
+                <div class="text-center space-y-4">
+                    <p class="text-gray-400 text-sm">微信号: <span class="text-white font-mono select-all">lazyhelper1</span></p>
+                    <button id="copy-wx-btn" class="w-full py-2.5 bg-[#7c3aed] hover:bg-[#6d28d9] text-white rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                        点击复制微信号
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dropdown Logic
+        const toolsBtn = document.getElementById('tools-btn');
+        const toolsMenu = document.getElementById('tools-menu');
+        const toolsDropdown = document.getElementById('tools-dropdown');
+
+        function toggleDropdown() {
+            const isHidden = toolsMenu.classList.contains('hidden');
+            if (isHidden) {
+                toolsMenu.classList.remove('hidden');
+                // Trigger reflow
+                void toolsMenu.offsetWidth;
+                toolsMenu.classList.remove('opacity-0', 'scale-95');
+                toolsMenu.classList.add('opacity-100', 'scale-100');
+            } else {
+                toolsMenu.classList.remove('opacity-100', 'scale-100');
+                toolsMenu.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    toolsMenu.classList.add('hidden');
+                }, 200);
+            }
+        }
+
+        // Toggle on click
+        toolsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleDropdown();
+        });
+
+        // Hover effect for desktop
+        toolsDropdown.addEventListener('mouseenter', () => {
+            if (window.innerWidth >= 768) {
+                toolsMenu.classList.remove('hidden');
+                void toolsMenu.offsetWidth;
+                toolsMenu.classList.remove('opacity-0', 'scale-95');
+                toolsMenu.classList.add('opacity-100', 'scale-100');
+            }
+        });
+
+        toolsDropdown.addEventListener('mouseleave', () => {
+            if (window.innerWidth >= 768) {
+                setTimeout(() => {
+                    if (!toolsDropdown.matches(':hover')) {
+                        toolsMenu.classList.remove('opacity-100', 'scale-100');
+                        toolsMenu.classList.add('opacity-0', 'scale-95');
+                        setTimeout(() => {
+                            if (!toolsDropdown.matches(':hover')) {
+                                toolsMenu.classList.add('hidden');
+                            }
+                        }, 200);
+                    }
+                }, 150);
+            }
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!toolsDropdown.contains(e.target)) {
+                toolsMenu.classList.remove('opacity-100', 'scale-100');
+                toolsMenu.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    toolsMenu.classList.add('hidden');
+                }, 200);
+            }
+        });
+
+        // Modal Logic
+        const contactBtn = document.getElementById('contact-btn');
+        const modal = document.getElementById('contact-modal');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const modalContent = document.getElementById('modal-content');
+        const modalClose = document.getElementById('modal-close');
+        const copyWxBtn = document.getElementById('copy-wx-btn');
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            // Trigger reflow
+            void modal.offsetWidth;
+            modalBackdrop.classList.remove('opacity-0');
+            modalBackdrop.classList.add('opacity-100');
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+            document.body.style.overflow = 'hidden';
+            
+            // Close dropdown if open
+            toolsMenu.classList.add('hidden');
+        }
+
+        function closeModal() {
+            modalBackdrop.classList.remove('opacity-100');
+            modalBackdrop.classList.add('opacity-0');
+            modalContent.classList.remove('opacity-100', 'scale-100');
+            modalContent.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        contactBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openModal();
+        });
+
+        modalClose.addEventListener('click', closeModal);
+        modalBackdrop.addEventListener('click', closeModal);
+
+        // Copy WeChat ID
+        copyWxBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText('lazyhelper1');
+                const originalText = copyWxBtn.innerHTML;
+                copyWxBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 复制成功`;
+                copyWxBtn.classList.remove('bg-[#7c3aed]', 'hover:bg-[#6d28d9]');
+                copyWxBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                
+                setTimeout(() => {
+                    copyWxBtn.innerHTML = originalText;
+                    copyWxBtn.classList.add('bg-[#7c3aed]', 'hover:bg-[#6d28d9]');
+                    copyWxBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+                alert('复制失败，请手动复制：lazyhelper1');
+            }
+        });
+    </script>
 
   <script src="app.js"></script>
 </body>

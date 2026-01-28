@@ -85,11 +85,34 @@
                         <a href="/" class="hover:text-primary transition-colors">LazyCut <span class="text-gray-200 font-medium">去水印工具</span></a>
                     </h1>
                 </div>
-                <nav class="flex gap-4 items-center">
-                    <a href="https://lazyso.com" class="hidden md:flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-sm transition-all text-white group text-sm font-medium">
-                        <span>👈</span>
-                        <span>回到 LazySo 主站</span>
-                    </a>
+                <nav class="flex gap-4 items-center relative">
+                    <div class="relative" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+                        <button 
+                            @click.stop="toggleTools" 
+                            class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-sm transition-all text-white text-sm font-medium group"
+                        >
+                            更多工具 <span class="transition-transform duration-200" :class="{ 'rotate-180': toolsMenuOpen }">▾</span>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div 
+                            v-show="toolsMenuOpen"
+                            class="absolute right-0 mt-2 w-64 rounded-xl bg-[#1a1a1c] border border-white/10 shadow-xl overflow-hidden z-50 transform origin-top-right transition-all duration-200"
+                            :class="{ 'opacity-100 scale-100': toolsMenuOpen, 'opacity-0 scale-95': !toolsMenuOpen }"
+                            style="display: none;"
+                            v-show.display="toolsMenuOpen ? 'block' : 'none'"
+                        >
+                            <a href="https://lazyso.com/" class="block px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors flex items-center gap-2">
+                                <span>🏠</span> 回到 LazySo 主站
+                            </a>
+                            <a href="https://wcnkxg1u4986.feishu.cn/base/UTBDb7vwiap3zmsJwuJctoVPnWx?from=from_copylink" target="_blank" class="block px-4 py-3 text-sm text-[#a78bfa] font-medium hover:bg-white/5 hover:text-[#c4b5fd] transition-colors border-t border-white/5 flex items-center gap-2">
+                                <span>🚀</span> 懒人兵器库 (AI 提示词/资源)
+                            </a>
+                            <button @click="openModal" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-t border-white/5 flex items-center gap-2">
+                                <span>💬</span> 联系作者
+                            </button>
+                        </div>
+                    </div>
                 </nav>
             </div>
         </header>
@@ -214,12 +237,12 @@
                                     <div class="bg-black/20 rounded-lg overflow-hidden flex items-center justify-center min-h-[200px] border border-primary/20 relative">
                                         <img v-if="file.type === 'image'" :src="file.resultUrl" class="max-h-64 object-contain">
                                         <video v-else-if="file.type === 'video'" :src="file.resultUrl" controls class="max-h-64"></video>
-                                        
-                                        <div class="absolute bottom-4 right-4">
-                                            <a :href="file.resultUrl" :download="file.downloadName || ('cleaned_' + file.name)" class="w-10 h-10 flex items-center justify-center bg-primary hover:bg-primary-hover text-white rounded-full shadow-lg transition-all">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                            </a>
-                                        </div>
+                                    </div>
+                                    <div class="mt-4 flex justify-center">
+                                        <a :href="file.resultUrl" :download="file.downloadName || ('cleaned_' + file.name)" class="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-xl font-medium shadow-lg transition-all flex items-center gap-2">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                            下载处理后的文件
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -257,6 +280,37 @@
         <footer class="bg-lazy-card text-gray-500 py-8 border-t border-white/10 text-center">
             <p class="text-sm">&copy; 2026 LazySo & MarkCut. All rights reserved.</p>
         </footer>
+
+        <!-- Contact Modal -->
+        <div v-if="modalOpen" class="fixed inset-0 z-[100]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="closeModal"></div>
+            
+            <!-- Modal Content -->
+            <div class="relative min-h-screen flex items-center justify-center p-4">
+                <div class="bg-[#1a1a1c] border border-white/10 rounded-2xl max-w-sm w-full p-6 shadow-2xl transform transition-all">
+                    <!-- Close Button -->
+                    <button @click="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                    
+                    <h3 class="text-xl font-bold text-white mb-6 text-center">联系作者，获取更多优质工具分享！</h3>
+                    
+                    <div class="bg-white p-1 rounded-xl mb-6 mx-auto w-fit">
+                        <img src="/vx_qrcode.jpg" alt="WeChat QR Code" class="w-64 h-64 object-contain">
+                    </div>
+                    
+                    <div class="text-center space-y-4">
+                        <p class="text-gray-400 text-sm">微信号: <span class="text-white font-mono select-all">lazyhelper1</span></p>
+                        <button @click="copyWx" class="w-full py-2.5 rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2" :class="copySuccess ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-[#7c3aed] hover:bg-[#6d28d9] text-white'">
+                            <svg v-if="!copySuccess" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                            <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            {{ copySuccess ? '复制成功' : '点击复制微信号' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script type="module" src="app.js"></script>

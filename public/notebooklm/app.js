@@ -490,6 +490,49 @@ createApp({
             });
         };
 
+        // --- 下拉菜单与模态框逻辑 ---
+        const toolsMenuOpen = ref(false);
+        const modalOpen = ref(false);
+        const copySuccess = ref(false);
+
+        const toggleTools = () => {
+            toolsMenuOpen.value = !toolsMenuOpen.value;
+        };
+
+        const openModal = () => {
+            modalOpen.value = true;
+            toolsMenuOpen.value = false;
+        };
+
+        const closeModal = () => {
+            modalOpen.value = false;
+        };
+
+        const copyWx = async () => {
+            try {
+                await navigator.clipboard.writeText('lazyhelper1');
+                copySuccess.value = true;
+                setTimeout(() => {
+                    copySuccess.value = false;
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+                alert('复制失败，请手动复制：lazyhelper1');
+            }
+        };
+
+        let closeTimer = null;
+        const handleMouseEnter = () => {
+            if (closeTimer) clearTimeout(closeTimer);
+            toolsMenuOpen.value = true;
+        };
+
+        const handleMouseLeave = () => {
+            closeTimer = setTimeout(() => {
+                toolsMenuOpen.value = false;
+            }, 150);
+        };
+
         return {
             files,
             isProcessing,
@@ -518,7 +561,18 @@ createApp({
             nextPage,
             toggleViewMode,
             processCurrentPage,
-            processAllPages
+            processAllPages,
+
+            // Dropdown & Modal
+            toolsMenuOpen,
+            modalOpen,
+            copySuccess,
+            toggleTools,
+            openModal,
+            closeModal,
+            copyWx,
+            handleMouseEnter,
+            handleMouseLeave
         };
     }
 }).mount('#app');
