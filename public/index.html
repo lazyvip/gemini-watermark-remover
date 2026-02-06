@@ -3,20 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LazyCut - Gemini & NotebookLM 去水印工具套件 | 免费在线工具</title>
-    <meta name="description" content="LazyCut (原 MarkCut) - 专业的 Gemini 和 NotebookLM 去水印工具套件。支持图片、PDF 去水印，采用反向 Alpha 混合与智能修复算法，完全浏览器本地处理，免费极速安全。">
+    <title>LazySo 懒人去水印 - 免费无损消除 Gemini/AI 图片水印 (纯前端隐私保护)</title>
+    <meta name="description" content="LazySo 旗下免费工具。专注 AI 去水印（Gemini/豆包/可灵），采用浏览器本地处理技术，保护隐私。无需上传，毫秒级无损还原。">
     <meta name="keywords" content="LazyCut, MarkCut, Gemini去水印, NotebookLM去水印, PDF去水印, 图片去水印, LazySo, 免费工具, 本地处理">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://lazyso.com/">
-    <meta property="og:title" content="LazyCut - 专业去水印工具套件">
-    <meta property="og:description" content="Gemini 和 NotebookLM 去水印工具。支持图片、PDF。完全本地处理，保护隐私。">
+    <meta property="og:title" content="LazySo 懒人去水印 - 免费无损消除 Gemini/AI 图片水印 (纯前端隐私保护)">
+    <meta property="og:description" content="LazySo 旗下免费工具。专注 AI 去水印（Gemini/豆包/可灵），采用浏览器本地处理技术，保护隐私。无需上传，毫秒级无损还原。">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="LazyCut - 专业去水印工具套件">
-    <meta property="twitter:description" content="Gemini 和 NotebookLM 去水印工具。支持图片、PDF。完全本地处理，保护隐私。">
+    <meta property="twitter:title" content="LazySo 懒人去水印 - 免费无损消除 Gemini/AI 图片水印 (纯前端隐私保护)">
+    <meta property="twitter:description" content="LazySo 旗下免费工具。专注 AI 去水印（Gemini/豆包/可灵），采用浏览器本地处理技术，保护隐私。无需上传，毫秒级无损还原。">
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "LazySo 懒人去水印",
+            "url": "https://clean.lazyso.com/",
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "Web",
+            "description": "LazySo 旗下免费工具。专注 AI 去水印（Gemini/豆包/可灵），采用浏览器本地处理技术，保护隐私。无需上传，毫秒级无损还原。",
+            "author": {
+                "@type": "Organization",
+                "name": "LazySo (懒人搜索)",
+                "url": "https://lazyso.com"
+            },
+            "maintainer": {
+                "@type": "Organization",
+                "name": "LazySo (懒人搜索)",
+                "url": "https://lazyso.com"
+            },
+            "isPartOf": {
+                "@type": "WebSite",
+                "url": "https://lazyso.com",
+                "name": "LazySo"
+            }
+        }
+    </script>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -41,7 +67,12 @@
                 <svg class="h-8 w-8 text-[#7c3aed]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m12 3-1.9 5.8-5.8 1.9 5.8 1.9 1.9 5.8 1.9-5.8 5.8-1.9-5.8-1.9Z"></path>
                 </svg>
-                <h1 class="text-xl font-bold tracking-tight text-white">懒人去水印</h1>
+                <div class="flex flex-col leading-tight">
+                    <h1 class="text-xl font-bold tracking-tight text-white">
+                        <a href="/" class="hover:text-white" title="LazySo 懒人去水印">LazySo 懒人去水印</a>
+                    </h1>
+                    <span class="text-xs text-gray-400">Powered by LazySo Labs</span>
+                </div>
             </div>
             <div class="relative" id="tools-dropdown">
                 <button id="tools-btn" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-sm transition-all text-white text-sm font-medium group">
@@ -146,6 +177,7 @@
     <!-- Footer -->
     <footer class="border-t border-white/10 py-8 bg-[#0f0f11]">
         <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+            <p class="mb-2">本工具由 <a href="https://lazyso.com" class="text-gray-300 hover:text-white transition-colors">LazySo 懒人搜索</a> 提供技术支持。探索更多自动化变现玩法 -> <a href="https://lazyso.com" class="text-gray-300 hover:text-white transition-colors">进入主站</a></p>
             <p>&copy; 2026 LazySo & MarkCut. All rights reserved.</p>
         </div>
     </footer>
