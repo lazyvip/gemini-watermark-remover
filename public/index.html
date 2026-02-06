@@ -41,7 +41,7 @@
                 <svg class="h-8 w-8 text-[#7c3aed]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m12 3-1.9 5.8-5.8 1.9 5.8 1.9 1.9 5.8 1.9-5.8 5.8-1.9-5.8-1.9Z"></path>
                 </svg>
-                <h1 class="text-xl font-bold tracking-tight text-white">LazyCut</h1>
+                <h1 class="text-xl font-bold tracking-tight text-white">懒人去水印</h1>
             </div>
             <div class="relative" id="tools-dropdown">
                 <button id="tools-btn" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-sm transition-all text-white text-sm font-medium group">
@@ -55,7 +55,7 @@
                     <a href="https://wcnkxg1u4986.feishu.cn/base/UTBDb7vwiap3zmsJwuJctoVPnWx?from=from_copylink" target="_blank" class="block px-4 py-3 text-sm text-[#a78bfa] font-medium hover:bg-white/5 hover:text-[#c4b5fd] transition-colors border-t border-white/5 flex items-center gap-2">
                         <span>🚀</span> 懒人兵器库 (AI 提示词/资源)
                     </a>
-                    <button id="contact-btn" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-t border-white/5 flex items-center gap-2">
+                    <button id="contact-btn" data-contact-trigger class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-t border-white/5 flex items-center gap-2">
                         <span>💬</span> 联系作者
                     </button>
                 </div>
@@ -71,7 +71,7 @@
                     专业的水印工具套件
                 </h2>
                 <p class="text-xl text-gray-400 max-w-2xl mx-auto">
-                    为 Gemini 图片或 NotebookLM 导出选择合适工具，处理全部在浏览器本地完成。
+                    移除Gemini（Nano banano)图片水印，NotebookLM PDF水印，图片水印。移除豆包/可灵平台图片水印，还可手动选择移除水印位置
                 </p>
             </div>
 
@@ -112,7 +112,7 @@
                         <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"></path></svg>
                     </div>
                     <h3 class="text-2xl font-bold text-white mb-3">豆包 / 可灵 水印去除</h3>
-                    <p class="text-gray-400 mb-8 flex-grow">复刻 ClearCat 原理，YOLO 检测 + MiGAN 修复，纯前端本地运行。</p>
+                    <p class="text-gray-400 mb-8 flex-grow">支持多平台水印去除豆包、可灵、即梦、AI生成等，AI智能识别水印位置，无损画质处理，让您的图片焕然一新</p>
                     <div class="flex items-center text-[#10B981] font-medium">
                         开始使用
                         <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
@@ -125,12 +125,20 @@
                         <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20l9-9-5-5-9 9v5h5z"></path></svg>
                     </div>
                     <h3 class="text-2xl font-bold text-white mb-3">手动涂抹去水印</h3>
-                    <p class="text-gray-400 mb-8 flex-grow">画笔标注 Mask，基于扩散修复算法，所见即所得，精准可控。</p>
+                    <p class="text-gray-400 mb-8 flex-grow">用画笔标记需要擦除的区域，然后点击修复即可</p>
                     <div class="flex items-center text-[#F59E0B] font-medium">
                         开始使用
                         <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                     </div>
                 </a>
+            </div>
+            <div class="mt-10 text-center">
+                <p class="text-gray-300 text-base md:text-lg max-w-3xl mx-auto">
+                    本站点提供完全免费的AI去水印服务，无需注册账户，无需付费订阅。您可以直接上传图片并享受专业级的去水印处理。
+                </p>
+                <button data-contact-trigger class="mt-6 inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-white text-sm font-medium">
+                    <span>💬</span> 联系作者
+                </button>
             </div>
         </div>
     </main>
@@ -238,7 +246,7 @@
         });
 
         // Modal Logic
-        const contactBtn = document.getElementById('contact-btn');
+        const contactButtons = document.querySelectorAll('[data-contact-trigger]');
         const modal = document.getElementById('contact-modal');
         const modalBackdrop = document.getElementById('modal-backdrop');
         const modalContent = document.getElementById('modal-content');
@@ -270,10 +278,12 @@
             }, 300);
         }
 
-        contactBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            openModal();
+        contactButtons.forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openModal();
+            });
         });
 
         modalClose.addEventListener('click', closeModal);

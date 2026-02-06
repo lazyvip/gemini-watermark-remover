@@ -95,13 +95,15 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
         .compare-handle::after {
-            content: '◀ ▶';
+            content: '◀▶';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 12px;
-            letter-spacing: 2px;
+            font-size: 14px;
+            line-height: 1;
+            font-weight: 600;
+            letter-spacing: 0;
             color: rgba(107, 114, 128, 0.9);
         }
         .mask-layer {
@@ -163,7 +165,7 @@
                 豆包 / 可灵 去水印工具
             </h2>
             <p class="text-base md:text-lg text-gray-400 max-w-2xl mx-auto">
-                YOLO 智能检测水印区域，MiGAN 修复细节，纯浏览器本地处理。
+                支持多平台水印去除：豆包、可灵、AI生成等，智能识别水印位置，无损画质处理，让您的图片焕然一新
             </p>
         </section>
 
@@ -240,7 +242,7 @@
 
     <footer class="bg-lazy-card text-gray-400 py-6 md:pt-10 md:pb-8 border-t border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-8 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mb-8">
                 <div class="col-span-1 md:col-span-2">
                     <h5 class="text-2xl font-bold mb-4 text-gray-200">LazyCut 去水印神器</h5>
                     <p class="text-gray-500 text-sm max-w-sm">豆包 / 可灵去水印工具，仅供学习交流使用</p>
@@ -250,12 +252,6 @@
                     <ul class="space-y-1 md:space-y-2 text-sm text-gray-500">
                         <li><a href="https://lazyso.com/insider/" target="_blank" class="hover:text-primary transition-colors">订阅 LazySo 会员</a></li>
                         <li><a href="/terms.html" class="hover:text-primary transition-colors">使用条款</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h6 class="font-bold mb-2 md:mb-4 text-gray-200">技术</h6>
-                    <ul class="space-y-1 md:space-y-2 text-sm text-gray-500">
-                        <li><a href="https://clearcat.lingxiangtools.top/" target="_blank" class="hover:text-primary transition-colors">原站复刻参考</a></li>
                     </ul>
                 </div>
             </div>
@@ -361,6 +357,67 @@
             ui.maskToggleBtn.classList.toggle('hover:bg-white/20', !visible);
         }
 
+        const preload = {
+            controller: null,
+            running: false,
+            done: false,
+            promise: null
+        };
+
+        function isWeakNetwork() {
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (!connection) return false;
+            if (connection.saveData) return true;
+            return ['slow-2g', '2g'].includes(connection.effectiveType);
+        }
+
+        function cancelPreload() {
+            if (preload.controller) {
+                preload.controller.abort();
+            }
+            preload.controller = null;
+            preload.running = false;
+        }
+
+        function startPreload() {
+            if (preload.running || preload.done || isWeakNetwork()) return;
+            preload.running = true;
+            preload.controller = new AbortController();
+            const { signal } = preload.controller;
+            preload.promise = (async () => {
+                const yoloRes = await fetch(MODELS.yolo, { signal });
+                if (!yoloRes.ok) throw new Error('yolo_preload_failed');
+                const yoloBuffer = await yoloRes.arrayBuffer();
+                if (!state.yoloSession) {
+                    state.yoloSession = await ort.InferenceSession.create(yoloBuffer, {
+                        executionProviders: ['wasm']
+                    });
+                }
+                const miganRes = await fetch(MODELS.migan, { signal });
+                if (!miganRes.ok) throw new Error('migan_preload_failed');
+                const miganBuffer = await miganRes.arrayBuffer();
+                if (!state.miganSession) {
+                    state.miganSession = await ort.InferenceSession.create(miganBuffer, {
+                        executionProviders: ['wasm']
+                    });
+                }
+                preload.done = true;
+            })().catch((err) => {
+                if (err && err.name === 'AbortError') return;
+            }).finally(() => {
+                preload.running = false;
+            });
+        }
+
+        function schedulePreload() {
+            if (isWeakNetwork()) return;
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(() => startPreload(), { timeout: 4000 });
+            } else {
+                setTimeout(() => startPreload(), 2000);
+            }
+        }
+
         async function fileToImageData(file) {
             const bitmap = await createImageBitmap(file);
             const canvas = document.createElement('canvas');
@@ -454,7 +511,7 @@
 
             async load() {
                 if (!state.yoloSession) {
-                    setStatus("正在加载 YOLO 模型...", true);
+                    setStatus("正在加载模型...", true);
                     state.yoloSession = await ort.InferenceSession.create(MODELS.yolo, {
                         executionProviders: ['wasm']
                     });
@@ -562,7 +619,7 @@
 
             async load() {
                 if (!state.miganSession) {
-                    setStatus("正在加载去水印模型...", true);
+                    setStatus("正在加载模型...", true);
                     state.miganSession = await ort.InferenceSession.create(MODELS.migan, {
                         executionProviders: ['wasm']
                     });
@@ -738,6 +795,13 @@
             window.location.href = './manual-inpaint.html';
         });
 
+        window.addEventListener('load', schedulePreload);
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                cancelPreload();
+            }
+        });
+
         ui.compareSlider.addEventListener('input', (e) => {
             updateCompare(e.target.value);
         });
@@ -752,6 +816,7 @@
             state.isProcessing = true;
             ui.processBtn.disabled = true;
             try {
+                cancelPreload();
                 await detector.load();
                 await inpainter.load();
                 setStatus("正在检测水印...", true);
@@ -766,7 +831,8 @@
                 }
                 setStatus(`检测到 ${detections.length} 个水印，正在修复...`, true);
                 const result = await inpainter.inpaint(state.originalImageData, mask);
-                drawImageData(ui.autoResultCanvas, result);
+                drawImageData(ui.autoOriginalCanvas, result);
+                drawImageData(ui.autoResultCanvas, state.originalImageData);
                 setCompareReady(true);
                 ui.downloadBtn.disabled = false;
                 setStatus("处理完成");
@@ -780,10 +846,10 @@
         });
 
         ui.downloadBtn.addEventListener('click', () => {
-            if (ui.autoResultCanvas.width === 0 || ui.autoResultCanvas.height === 0) return;
+            if (ui.autoOriginalCanvas.width === 0 || ui.autoOriginalCanvas.height === 0) return;
             const link = document.createElement('a');
             link.download = 'cleaned.png';
-            link.href = ui.autoResultCanvas.toDataURL('image/png');
+            link.href = ui.autoOriginalCanvas.toDataURL('image/png');
             link.click();
         });
 
@@ -823,6 +889,7 @@
             state.isProcessing = true;
             ui.manualProcessBtn.disabled = true;
             try {
+                cancelPreload();
                 await inpainter.load();
                 setStatus("正在手动修复...", true);
                 const maskData = ui.manualMaskCanvas.getContext('2d').getImageData(0, 0, ui.manualMaskCanvas.width, ui.manualMaskCanvas.height);

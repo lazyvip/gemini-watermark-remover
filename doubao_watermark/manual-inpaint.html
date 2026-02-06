@@ -143,7 +143,7 @@
                         <button id="clearMaskBtn" class="px-5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed" disabled>清空涂抹</button>
                         <button id="manualProcessBtn" class="px-5 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed" disabled>开始修复</button>
                     </div>
-                    <div class="grid md:grid-cols-3 gap-4">
+                    <div id="manualGrid" class="grid md:grid-cols-2 gap-4">
                         <div class="bg-white/5 border border-white/10 rounded-xl p-3">
                             <div class="text-sm text-gray-300 mb-2">原图</div>
                             <div class="relative">
@@ -251,7 +251,8 @@
             clearMaskBtn: document.getElementById('clearMaskBtn'),
             brushSize: document.getElementById('brushSize'),
             maskToggleBtn: document.getElementById('maskToggleBtn'),
-            manualMaskPanel: document.getElementById('manualMaskPanel')
+            manualMaskPanel: document.getElementById('manualMaskPanel'),
+            manualGrid: document.getElementById('manualGrid')
         };
 
         function setStatus(text, loading = false) {
@@ -266,6 +267,69 @@
             ui.maskToggleBtn.classList.toggle('hover:bg-primary-hover', visible);
             ui.maskToggleBtn.classList.toggle('bg-white/10', !visible);
             ui.maskToggleBtn.classList.toggle('hover:bg-white/20', !visible);
+            ui.manualGrid.classList.toggle('md:grid-cols-3', visible);
+            ui.manualGrid.classList.toggle('md:grid-cols-2', !visible);
+        }
+
+        const preload = {
+            controller: null,
+            running: false,
+            done: false,
+            promise: null
+        };
+
+        function isWeakNetwork() {
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (!connection) return false;
+            if (connection.saveData) return true;
+            return ['slow-2g', '2g'].includes(connection.effectiveType);
+        }
+
+        function cancelPreload() {
+            if (preload.controller) {
+                preload.controller.abort();
+            }
+            preload.controller = null;
+            preload.running = false;
+        }
+
+        function startPreload() {
+            if (preload.running || preload.done || isWeakNetwork()) return;
+            preload.running = true;
+            preload.controller = new AbortController();
+            const { signal } = preload.controller;
+            preload.promise = (async () => {
+                const miganRes = await fetch(MODELS.migan, { signal });
+                if (!miganRes.ok) throw new Error('migan_preload_failed');
+                const miganBuffer = await miganRes.arrayBuffer();
+                if (!state.miganSession) {
+                    state.miganSession = await ort.InferenceSession.create(miganBuffer, {
+                        executionProviders: ['wasm']
+                    });
+                }
+                const yoloRes = await fetch(MODELS.yolo, { signal });
+                if (!yoloRes.ok) throw new Error('yolo_preload_failed');
+                const yoloBuffer = await yoloRes.arrayBuffer();
+                if (!state.yoloSession) {
+                    state.yoloSession = await ort.InferenceSession.create(yoloBuffer, {
+                        executionProviders: ['wasm']
+                    });
+                }
+                preload.done = true;
+            })().catch((err) => {
+                if (err && err.name === 'AbortError') return;
+            }).finally(() => {
+                preload.running = false;
+            });
+        }
+
+        function schedulePreload() {
+            if (isWeakNetwork()) return;
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(() => startPreload(), { timeout: 4000 });
+            } else {
+                setTimeout(() => startPreload(), 2000);
+            }
         }
 
         async function fileToImageData(file) {
@@ -361,7 +425,7 @@
 
             async load() {
                 if (!state.yoloSession) {
-                    setStatus("正在加载 YOLO 模型...", true);
+                    setStatus("正在加载模型...", true);
                     state.yoloSession = await ort.InferenceSession.create(MODELS.yolo, {
                         executionProviders: ['wasm']
                     });
@@ -469,7 +533,7 @@
 
             async load() {
                 if (!state.miganSession) {
-                    setStatus("正在加载去水印模型...", true);
+                    setStatus("正在加载模型...", true);
                     state.miganSession = await ort.InferenceSession.create(MODELS.migan, {
                         executionProviders: ['wasm']
                     });
@@ -646,6 +710,13 @@
         ui.autoTab.addEventListener('click', () => setMode('auto'));
         ui.manualTab.addEventListener('click', () => setMode('manual'));
 
+        window.addEventListener('load', schedulePreload);
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                cancelPreload();
+            }
+        });
+
         ui.maskToggleBtn.addEventListener('click', () => {
             const visible = ui.manualMaskPanel.classList.contains('hidden');
             setMaskVisible(visible);
@@ -656,6 +727,7 @@
             state.isProcessing = true;
             ui.processBtn.disabled = true;
             try {
+                cancelPreload();
                 await detector.load();
                 await inpainter.load();
                 setStatus("正在检测水印...", true);
@@ -682,6 +754,7 @@
             state.isProcessing = true;
             ui.manualProcessBtn.disabled = true;
             try {
+                cancelPreload();
                 await inpainter.load();
                 setStatus("正在手动修复...", true);
                 const maskData = ui.manualMaskCanvas.getContext('2d').getImageData(0, 0, ui.manualMaskCanvas.width, ui.manualMaskCanvas.height);
