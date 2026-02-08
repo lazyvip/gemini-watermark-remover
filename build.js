@@ -100,7 +100,11 @@ const userscriptCtx = await esbuild.context({
 
 console.log(`🚀 Starting build process... [${isProd ? 'PRODUCTION' : 'DEVELOPMENT'}]`);
 
-if (existsSync('dist')) rmSync('dist', { recursive: true });
+try {
+  if (existsSync('dist')) rmSync('dist', { recursive: true, force: true });
+} catch (e) {
+  console.warn('⚠️ Clean step skipped:', e?.message || e);
+}
 mkdirSync('dist/userscript', { recursive: true });
   
 if (isProd) {

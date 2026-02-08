@@ -38,6 +38,7 @@
             }
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; }
@@ -185,8 +186,8 @@
 
                 <div id="uploadArea" class="group relative flex flex-col items-center justify-center w-full h-56 border-2 border-dashed border-white/10 rounded-xl bg-white/5 hover:bg-white/10 hover:border-primary/50 transition-all cursor-pointer">
                     <div class="text-lg font-semibold">拖拽图片到这里</div>
-                    <div class="text-sm text-gray-400">支持 JPG / PNG / WEBP，点击上传、拖拽或 Ctrl+V 粘贴</div>
-                    <input type="file" id="imageInput" accept="image/*" hidden>
+                    <div class="text-sm text-gray-400">支持同时上传多张，JPG / PNG / WEBP，点击上传、拖拽或 Ctrl+V 粘贴</div>
+                    <input type="file" id="imageInput" accept="image/*" multiple hidden>
                     <button id="selectBtn" class="mt-3 px-5 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium">选择图片</button>
                 </div>
 
@@ -197,7 +198,9 @@
                         <button id="processBtn" class="px-5 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed" disabled>开始去水印</button>
                         <button id="maskToggleBtn" class="px-5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium">显示模版</button>
                         <button id="downloadBtn" class="px-5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed" disabled>下载结果</button>
+                        <button id="downloadAllBtn" class="px-5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed" style="display:none" disabled>批量下载</button>
                     </div>
+                    <div id="queueList" class="mb-6 space-y-2"></div>
                     <div class="flex flex-col gap-3">
                         <div class="compare-stage" id="compareStage">
                             <canvas id="autoOriginalCanvas"></canvas>
@@ -332,7 +335,9 @@
             compareHandle: document.getElementById('compareHandle'),
             maskToggleBtn: document.getElementById('maskToggleBtn'),
             maskWrap: document.getElementById('maskWrap'),
-            downloadBtn: document.getElementById('downloadBtn')
+            downloadBtn: document.getElementById('downloadBtn'),
+            downloadAllBtn: document.getElementById('downloadAllBtn'),
+            queueList: document.getElementById('queueList')
         };
 
         function setStatus(text, loading = false) {
@@ -436,6 +441,16 @@
             return ctx.getImageData(0, 0, canvas.width, canvas.height);
         }
 
+        async function blobToImageData(blob) {
+            const bitmap = await createImageBitmap(blob);
+            const canvas = document.createElement('canvas');
+            canvas.width = bitmap.width;
+            canvas.height = bitmap.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(bitmap, 0, 0);
+            return ctx.getImageData(0, 0, canvas.width, canvas.height);
+        }
+
         function drawImageData(canvas, imageData) {
             canvas.width = imageData.width;
             canvas.height = imageData.height;
@@ -446,6 +461,189 @@
         function clearCanvas(canvas) {
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        let imageQueue = [];
+        let processedCount = 0;
+        let selectedBatchId = null;
+        function setBatchMode(isBatch) {
+            ui.maskToggleBtn.disabled = isBatch;
+            ui.downloadBtn.disabled = true;
+            ui.compareSlider.disabled = isBatch;
+            setCompareReady(false);
+            ui.downloadAllBtn.style.display = isBatch ? 'inline-flex' : 'none';
+        }
+
+        function resetQueue() {
+            imageQueue.forEach(item => {
+                if (item.originalUrl) URL.revokeObjectURL(item.originalUrl);
+                if (item.processedUrl) URL.revokeObjectURL(item.processedUrl);
+            });
+            imageQueue = [];
+            processedCount = 0;
+            ui.queueList.innerHTML = '';
+            ui.downloadAllBtn.disabled = true;
+            selectedBatchId = null;
+            setBatchMode(false);
+        }
+
+        function getSelectedItem() {
+            return imageQueue.find(item => item.id === selectedBatchId) || imageQueue[0];
+        }
+
+        async function renderSelectedPreview() {
+            const item = getSelectedItem();
+            if (!item) return;
+            const originalData = await fileToImageData(item.file);
+            drawImageData(ui.autoOriginalCanvas, originalData);
+            if (item.processedBlob) {
+                const processedData = await blobToImageData(item.processedBlob);
+                drawImageData(ui.autoResultCanvas, processedData);
+                setCompareReady(true);
+                ui.compareSlider.disabled = false;
+            } else {
+                clearCanvas(ui.autoResultCanvas);
+                setCompareReady(false);
+                ui.compareSlider.disabled = true;
+            }
+        }
+
+        function setSelectedItem(id) {
+            selectedBatchId = id;
+            const activeClass = ['ring-1', 'ring-primary/60'];
+            imageQueue.forEach(item => {
+                const row = document.getElementById(`row-${item.id}`);
+                if (!row) return;
+                if (item.id === id) {
+                    row.classList.add(...activeClass);
+                } else {
+                    row.classList.remove(...activeClass);
+                }
+            });
+            renderSelectedPreview();
+        }
+
+        function addFiles(files) {
+            const list = Array.from(files || []).filter(f => f && f.type.startsWith('image/'));
+            list.forEach((file, idx) => {
+                const id = `${Date.now()}_${imageQueue.length + idx}`;
+                const originalUrl = URL.createObjectURL(file);
+                const item = { id, file, name: file.name || `image_${id}.png`, status: 'pending', originalUrl, processedBlob: null, processedUrl: '' };
+                imageQueue.push(item);
+                const row = document.createElement('div');
+                row.id = `row-${item.id}`;
+                row.className = 'flex flex-wrap items-center justify-between gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 cursor-pointer';
+                const left = document.createElement('div');
+                left.className = 'flex items-center gap-3 min-w-0';
+                const preview = document.createElement('img');
+                preview.id = `preview-${item.id}`;
+                preview.src = item.originalUrl;
+                preview.alt = item.name;
+                preview.className = 'w-16 h-16 rounded-lg object-cover border border-white/10 bg-white/5';
+                const nameWrap = document.createElement('div');
+                nameWrap.className = 'min-w-0';
+                const nameEl = document.createElement('div');
+                nameEl.className = 'text-sm text-gray-200 truncate';
+                nameEl.textContent = item.name;
+                const statusEl = document.createElement('div');
+                statusEl.className = 'text-xs text-gray-400';
+                statusEl.id = `status-${item.id}`;
+                statusEl.textContent = '待处理';
+                nameWrap.appendChild(nameEl);
+                nameWrap.appendChild(statusEl);
+                left.appendChild(preview);
+                left.appendChild(nameWrap);
+                const btn = document.createElement('button');
+                btn.id = `download-${item.id}`;
+                btn.className = 'px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed';
+                btn.textContent = '下载';
+                btn.disabled = true;
+                btn.onclick = () => {
+                    if (!item.processedUrl) return;
+                    const a = document.createElement('a');
+                    a.href = item.processedUrl;
+                    a.download = `cleaned_${item.name.replace(/\.[^.]+$/, '')}.png`;
+                    a.click();
+                };
+                row.addEventListener('click', () => setSelectedItem(item.id));
+                row.appendChild(left);
+                row.appendChild(btn);
+                ui.queueList.appendChild(row);
+            });
+            if (list.length > 0) {
+                ui.processBtn.disabled = false;
+                setBatchMode(imageQueue.length > 1);
+                if (!selectedBatchId) {
+                    setSelectedItem(imageQueue[0].id);
+                }
+            }
+        }
+
+        async function runBatch() {
+            if (imageQueue.length === 0) return;
+            if (state.isProcessing) return;
+            state.isProcessing = true;
+            ui.processBtn.disabled = true;
+            try {
+                cancelPreload();
+                await detector.load();
+                await inpainter.load();
+                for (const item of imageQueue) {
+                    if (item.status !== 'pending') continue;
+                    const statusEl = document.getElementById(`status-${item.id}`);
+                    statusEl.textContent = '处理中...';
+                    setStatus('正在检测水印...', true);
+                    const imageData = await fileToImageData(item.file);
+                    const { detections, mask } = await detector.predict(imageData);
+                    if (!detections || detections.length === 0) {
+                        item.status = 'failed';
+                        statusEl.textContent = '未检测到水印';
+                        continue;
+                    }
+                    const result = await inpainter.inpaint(imageData, mask);
+                    const off = document.createElement('canvas');
+                    drawImageData(off, result);
+                    const blob = await new Promise(resolve => off.toBlob(resolve, 'image/png'));
+                    item.processedBlob = blob;
+                    item.processedUrl = URL.createObjectURL(blob);
+                    item.status = 'completed';
+                    processedCount++;
+                    statusEl.textContent = '处理完成';
+                    const dBtn = document.getElementById(`download-${item.id}`);
+                    if (dBtn) dBtn.disabled = false;
+                    const previewEl = document.getElementById(`preview-${item.id}`);
+                    if (previewEl) previewEl.src = item.processedUrl;
+                    if (item.id === selectedBatchId) {
+                        await renderSelectedPreview();
+                    }
+                }
+                setStatus('处理完成');
+                if (processedCount > 0) ui.downloadAllBtn.disabled = false;
+            } catch (err) {
+                setStatus('处理出错：' + err.message);
+            } finally {
+                state.isProcessing = false;
+                ui.processBtn.disabled = false;
+            }
+        }
+
+        async function downloadAllBatch() {
+            const completed = imageQueue.filter(x => x.status === 'completed');
+            if (completed.length === 0) return;
+            if (!window.JSZip) {
+                setStatus('批量下载组件未加载');
+                return;
+            }
+            const zip = new JSZip();
+            completed.forEach(item => {
+                const filename = `cleaned_${item.name.replace(/\.[^.]+$/, '')}.png`;
+                zip.file(filename, item.processedBlob);
+            });
+            const blob = await zip.generateAsync({ type: 'blob' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `cleaned_${Date.now()}.zip`;
+            a.click();
         }
 
         function createMaskFromDetections(detections, width, height) {
@@ -768,8 +966,16 @@
 
         ui.selectBtn.addEventListener('click', () => ui.input.click());
         ui.input.addEventListener('change', async (e) => {
-            const file = e.target.files && e.target.files[0];
-            await handleFile(file);
+            const files = Array.from(e.target.files || []);
+            if (files.length > 1) {
+                addFiles(files);
+                e.target.value = '';
+                setStatus(`已添加 ${files.length} 张图片`);
+            } else {
+                resetQueue();
+                const file = files[0];
+                await handleFile(file);
+            }
         });
 
         ui.uploadArea.addEventListener('dragover', (e) => {
@@ -782,8 +988,15 @@
         ui.uploadArea.addEventListener('drop', async (e) => {
             e.preventDefault();
             ui.uploadArea.classList.remove('dragover');
-            const file = e.dataTransfer.files && e.dataTransfer.files[0];
-            await handleFile(file);
+            const files = Array.from(e.dataTransfer.files || []);
+            if (files.length > 1) {
+                addFiles(files);
+                setStatus(`已添加 ${files.length} 张图片`);
+            } else {
+                resetQueue();
+                const file = files[0];
+                await handleFile(file);
+            }
         });
 
         document.addEventListener('paste', async (e) => {
@@ -820,6 +1033,10 @@
         });
 
         ui.processBtn.addEventListener('click', async () => {
+            if (imageQueue.length > 0) {
+                await runBatch();
+                return;
+            }
             if (!state.originalImageData || state.isProcessing) return;
             state.isProcessing = true;
             ui.processBtn.disabled = true;
@@ -852,6 +1069,8 @@
                 ui.processBtn.disabled = false;
             }
         });
+
+        ui.downloadAllBtn.addEventListener('click', downloadAllBatch);
 
         ui.downloadBtn.addEventListener('click', () => {
             if (ui.autoOriginalCanvas.width === 0 || ui.autoOriginalCanvas.height === 0) return;
