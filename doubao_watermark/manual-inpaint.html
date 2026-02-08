@@ -7,7 +7,7 @@
     <meta name="description" content="LazyCut 手动涂抹去水印工具，画笔标注 Mask，纯浏览器本地修复，免费极速安全。">
     <meta name="keywords" content="手动去水印, 图片修复, 手动涂抹, LazyCut, LazySo, 本地处理">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://lazyso.com/doubao/manual-inpaint">
+    <meta property="og:url" content="https://clean.lazyso.com/manual-inpaint">
     <meta property="og:title" content="LazyCut - 手动涂抹去水印">
     <meta property="og:description" content="画笔标注 Mask，纯浏览器本地修复，免费、极速、安全。">
     <meta property="twitter:card" content="summary_large_image">
@@ -226,8 +226,8 @@
         ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/";
 
         const MODELS = {
-            yolo: './yolo.onnx',
-            migan: './migan.onnx'
+            yolo: '/doubao_watermark/yolo.onnx',
+            migan: '/doubao_watermark/migan.onnx'
         };
 
         const state = {

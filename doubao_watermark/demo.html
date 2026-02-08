@@ -7,7 +7,7 @@
     <meta name="description" content="LazyCut 豆包 / 可灵 去水印工具，基于 YOLO 检测与 MiGAN 修复，纯浏览器本地处理，免费极速安全。">
     <meta name="keywords" content="豆包去水印, 可灵去水印, 图片去水印, AI去水印, LazyCut, LazySo, 本地处理">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://lazyso.com/doubao/">
+    <meta property="og:url" content="https://clean.lazyso.com/doubao_watermark">
     <meta property="og:title" content="LazyCut - 豆包 / 可灵 去水印工具">
     <meta property="og:description" content="基于 YOLO 检测 + MiGAN 修复，纯浏览器本地处理，免费、极速、安全。">
     <meta property="twitter:card" content="summary_large_image">
@@ -295,8 +295,8 @@
         ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/";
 
         const MODELS = {
-            yolo: './yolo.onnx',
-            migan: './migan.onnx'
+            yolo: '/doubao_watermark/yolo.onnx',
+            migan: '/doubao_watermark/migan.onnx'
         };
 
         const state = {
@@ -800,7 +800,7 @@
 
         ui.autoTab.addEventListener('click', () => setMode('auto'));
         ui.manualTab.addEventListener('click', () => {
-            window.location.href = './manual-inpaint.html';
+            window.location.href = '/manual-inpaint';
         });
 
         window.addEventListener('load', schedulePreload);

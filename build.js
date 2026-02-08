@@ -43,6 +43,13 @@ const userscriptBanner = `// ==UserScript==
 // ==/UserScript==
 `;
 
+const syncDoubaoRouteIndexes = () => {
+  if (!existsSync('dist/doubao_watermark')) mkdirSync('dist/doubao_watermark', { recursive: true });
+  cpSync('doubao_watermark/demo.html', 'dist/doubao_watermark/index.html');
+  if (!existsSync('dist/manual-inpaint')) mkdirSync('dist/manual-inpaint', { recursive: true });
+  cpSync('doubao_watermark/manual-inpaint.html', 'dist/manual-inpaint/index.html');
+};
+
 const copyAssetsPlugin = {
   name: 'copy-assets',
   setup(build) {
@@ -54,6 +61,7 @@ const copyAssetsPlugin = {
         cpSync('public', 'dist', { recursive: true });
         if (!existsSync('dist/doubao_watermark')) mkdirSync('dist/doubao_watermark', { recursive: true });
         cpSync('doubao_watermark', 'dist/doubao_watermark', { recursive: true });
+        syncDoubaoRouteIndexes();
       } catch (err) {
         console.error('❌ Asset copy failed:', err);
       }
@@ -113,6 +121,9 @@ if (isProd) {
         console.log(`📂 Asset changed: ${filename}`);
         try {
           cpSync(dir, dest, { recursive: true });
+          if (dir === 'doubao_watermark') {
+            syncDoubaoRouteIndexes();
+          }
         } catch (e) {
           console.error('Sync failed:', e);
         }
