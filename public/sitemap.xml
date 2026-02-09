@@ -7,7 +7,7 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://clean.lazyso.com/gemini.html</loc>
+    <loc>https://clean.lazyso.com/gemini/</loc>
     <lastmod>2026-02-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -19,13 +19,13 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://clean.lazyso.com/doubao_watermark</loc>
+    <loc>https://clean.lazyso.com/doubao/</loc>
     <lastmod>2026-02-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://clean.lazyso.com/manual-inpaint</loc>
+    <loc>https://clean.lazyso.com/manual/</loc>
     <lastmod>2026-02-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>

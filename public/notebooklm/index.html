@@ -9,7 +9,7 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://lazyso.com/notebooklm/">
+    <meta property="og:url" content="https://clean.lazyso.com/notebooklm/">
     <meta property="og:title" content="LazyCut - NotebookLM 去水印工具">
     <meta property="og:description" content="专为 NotebookLM 导出的文档设计，支持图片和 PDF 去水印。完全浏览器本地处理，保护隐私。">
     
@@ -17,6 +17,48 @@
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:title" content="LazyCut - NotebookLM 去水印工具">
     <meta property="twitter:description" content="专为 NotebookLM 导出的文档设计，支持图片和 PDF 去水印。完全浏览器本地处理，保护隐私。">
+    <link rel="canonical" href="https://clean.lazyso.com/notebooklm/">
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "SoftwareApplication",
+                    "name": "LazyCut NotebookLM 去水印工具",
+                    "applicationCategory": "ImageEditingApplication",
+                    "operatingSystem": "Web",
+                    "url": "https://clean.lazyso.com/notebooklm/",
+                    "description": "专为 NotebookLM 导出的文档设计，支持图片和 PDF 去水印。完全浏览器本地处理，保护隐私。",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "CNY"
+                    }
+                },
+                {
+                    "@type": "HowTo",
+                    "name": "如何使用 LazyCut 去除 NotebookLM 水印",
+                    "step": [
+                        {
+                            "@type": "HowToStep",
+                            "name": "上传文件",
+                            "text": "点击上传或拖拽..."
+                        },
+                        {
+                            "@type": "HowToStep",
+                            "name": "等待本地处理",
+                            "text": "浏览器本地 WASM 自动识别..."
+                        },
+                        {
+                            "@type": "HowToStep",
+                            "name": "预览与下载",
+                            "text": "确认无损效果并保存..."
+                        }
+                    ]
+                }
+            ]
+        }
+    </script>
     
     <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -45,6 +87,7 @@
     <link rel="stylesheet" href="/notebooklm/style.css">
     <style>
         body { font-family: 'Inter', sans-serif; }
+        [v-cloak] { display: none; }
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: #1a1a1a; }
         ::-webkit-scrollbar-thumb { background: #3B82F6; border-radius: 4px; }
@@ -82,9 +125,9 @@
                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                     </svg>
                     <div class="flex flex-col leading-tight">
-                        <h1 class="text-sm font-bold tracking-tight text-primary md:text-xl">
+                        <div class="text-sm font-bold tracking-tight text-primary md:text-xl">
                             <a href="/" class="hover:text-primary transition-colors" title="懒人去水印">懒人去水印</a>
-                        </h1>
+                        </div>
                         <span class="text-xs text-gray-400">Powered by LazySo Labs</span>
                     </div>
                 </div>
@@ -126,7 +169,7 @@
 
         <main class="max-w-7xl mx-auto px-4 py-8 w-full">
             <section class="text-center mb-12">
-                <h2 class="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">NotebookLM 水印去除工具</h2>
+                <h1 class="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">NotebookLM 水印去除工具</h1>
                 <p class="text-gray-400 text-lg">完全本地处理，保护您的文档隐私</p>
             </section>
 

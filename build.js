@@ -48,6 +48,15 @@ const syncDoubaoRouteIndexes = () => {
   cpSync('doubao_watermark/demo.html', 'dist/doubao_watermark/index.html');
   if (!existsSync('dist/manual-inpaint')) mkdirSync('dist/manual-inpaint', { recursive: true });
   cpSync('doubao_watermark/manual-inpaint.html', 'dist/manual-inpaint/index.html');
+  if (!existsSync('dist/doubao')) mkdirSync('dist/doubao', { recursive: true });
+  cpSync('doubao_watermark/demo.html', 'dist/doubao/index.html');
+  if (!existsSync('dist/manual')) mkdirSync('dist/manual', { recursive: true });
+  cpSync('doubao_watermark/manual-inpaint.html', 'dist/manual/index.html');
+};
+
+const syncGeminiRouteIndexes = () => {
+  if (!existsSync('dist/gemini')) mkdirSync('dist/gemini', { recursive: true });
+  cpSync('public/gemini.html', 'dist/gemini/index.html');
 };
 
 const copyAssetsPlugin = {
@@ -58,9 +67,12 @@ const copyAssetsPlugin = {
       try {
         if (!existsSync('dist/i18n')) mkdirSync('dist/i18n', { recursive: true });
         cpSync('src/i18n', 'dist/i18n', { recursive: true });
+        syncGeminiRouteIndexes();
         cpSync('public', 'dist', { recursive: true });
         if (!existsSync('dist/doubao_watermark')) mkdirSync('dist/doubao_watermark', { recursive: true });
         cpSync('doubao_watermark', 'dist/doubao_watermark', { recursive: true });
+        if (!existsSync('dist/doubao')) mkdirSync('dist/doubao', { recursive: true });
+        cpSync('doubao_watermark', 'dist/doubao', { recursive: true });
         syncDoubaoRouteIndexes();
       } catch (err) {
         console.error('❌ Asset copy failed:', err);
@@ -126,7 +138,12 @@ if (isProd) {
         try {
           cpSync(dir, dest, { recursive: true });
           if (dir === 'doubao_watermark') {
+            if (!existsSync('dist/doubao')) mkdirSync('dist/doubao', { recursive: true });
+            cpSync('doubao_watermark', 'dist/doubao', { recursive: true });
             syncDoubaoRouteIndexes();
+          }
+          if (dir === 'public') {
+            syncGeminiRouteIndexes();
           }
         } catch (e) {
           console.error('Sync failed:', e);

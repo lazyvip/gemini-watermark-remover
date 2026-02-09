@@ -7,12 +7,54 @@
     <meta name="description" content="LazyCut 手动涂抹去水印工具，画笔标注 Mask，纯浏览器本地修复，免费极速安全。">
     <meta name="keywords" content="手动去水印, 图片修复, 手动涂抹, LazyCut, LazySo, 本地处理">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://clean.lazyso.com/manual-inpaint">
+    <meta property="og:url" content="https://clean.lazyso.com/manual/">
     <meta property="og:title" content="LazyCut - 手动涂抹去水印">
     <meta property="og:description" content="画笔标注 Mask，纯浏览器本地修复，免费、极速、安全。">
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:title" content="LazyCut - 手动涂抹去水印">
     <meta property="twitter:description" content="画笔标注 Mask，纯浏览器本地修复，免费、极速、安全。">
+    <link rel="canonical" href="https://clean.lazyso.com/manual/">
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "SoftwareApplication",
+                    "name": "LazyCut 手动涂抹去水印工具",
+                    "applicationCategory": "ImageEditingApplication",
+                    "operatingSystem": "Web",
+                    "url": "https://clean.lazyso.com/manual/",
+                    "description": "手动标注 Mask，浏览器本地修复，免费极速安全。",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "CNY"
+                    }
+                },
+                {
+                    "@type": "HowTo",
+                    "name": "如何使用 LazyCut 去除 手动涂抹 水印",
+                    "step": [
+                        {
+                            "@type": "HowToStep",
+                            "name": "上传文件",
+                            "text": "点击上传或拖拽..."
+                        },
+                        {
+                            "@type": "HowToStep",
+                            "name": "等待本地处理",
+                            "text": "浏览器本地 WASM 自动识别..."
+                        },
+                        {
+                            "@type": "HowToStep",
+                            "name": "预览与下载",
+                            "text": "确认无损效果并保存..."
+                        }
+                    ]
+                }
+            ]
+        }
+    </script>
     <link rel="icon" href="data:image/svg+xml,%3Csvg class='h-10 w-10 text-indigo-500' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F59E0B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20l9-9-5-5-9 9v5h5z'/%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -62,9 +104,9 @@
                     <path d="M12 20l9-9-5-5-9 9v5h5z"></path>
                 </svg>
                 <div class="flex flex-col leading-tight">
-                    <h1 class="text-sm font-bold tracking-tight text-primary md:text-xl">
+                    <div class="text-sm font-bold tracking-tight text-primary md:text-xl">
                         <a href="/" class="hover:text-primary transition-colors" title="懒人去水印">懒人去水印</a>
-                    </h1>
+                    </div>
                     <span class="text-xs text-gray-400">Powered by LazySo Labs</span>
                 </div>
             </div>
@@ -96,9 +138,9 @@
     <main class="flex-grow">
         <section class="relative pt-16 pb-10 text-center px-4 overflow-hidden">
             <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-900/20 via-lazy-dark to-lazy-dark -z-10"></div>
-            <h2 class="bg-clip-text bg-gradient-to-br font-extrabold from-white mb-6 md:text-5xl text-3xl text-transparent to-gray-400 tracking-tight">
+            <h1 class="bg-clip-text bg-gradient-to-br font-extrabold from-white mb-6 md:text-5xl text-3xl text-transparent to-gray-400 tracking-tight">
                 手动涂抹去水印
-            </h2>
+            </h1>
             <p class="text-base md:text-lg text-gray-400 max-w-2xl mx-auto">
                 画笔标注水印区域，细节可控，修复结果所见即所得。
             </p>
@@ -226,8 +268,8 @@
         ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/";
 
         const MODELS = {
-            yolo: '/doubao_watermark/yolo.onnx',
-            migan: '/doubao_watermark/migan.onnx'
+            yolo: '/doubao/yolo.onnx',
+            migan: '/doubao/migan.onnx'
         };
 
         const state = {
