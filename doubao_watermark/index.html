@@ -1,41 +1,1337 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-
-    <link rel="icon" type="image/webp" href="/logo.webp">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ClearCat|灵猫去水印 - AI智能水印去除工具 | 在线图片去水印</title>
-
-    <!-- SEO优化 -->
-    <meta name="description" content="ClearCat是一款基于AI技术的智能水印去除工具，支持在线图片去水印、图像修复、水印检测。无需下载，浏览器直接使用，保护您的隐私安全。">
-    <meta name="keywords" content="去水印,水印去除,图片去水印,在线去水印,AI去水印,图像修复,水印检测,图片处理,ClearCat|灵猫去水印, 豆包去水印,即梦去水印, 可灵去水印,gemini去水印, 灵猫去水印, 灵猫去水印工具, 图片去水印工具, 图片去水印软件, 图片隐私保护, 图片安全,">
-    <meta name="author" content="ClearCat|灵猫去水印">
-    <meta name="robots" content="index,follow">
-
-    <!-- Open Graph / Facebook -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LazyCut - 豆包 / 可灵 去水印工具 | 免费在线工具</title>
+    <meta name="description" content="LazyCut 豆包 / 可灵 去水印工具，基于 YOLO 检测与 MiGAN 修复，纯浏览器本地处理，免费极速安全。">
+    <meta name="keywords" content="豆包去水印, 可灵去水印, 图片去水印, AI去水印, LazyCut, LazySo, 本地处理">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://clearcat.lingxaingtools.top">
-    <meta property="og:title" content="ClearCat|灵猫去水印 - AI智能水印去除工具">
-    <meta property="og:description" content="基于AI技术的智能水印去除工具，支持在线图片去水印、图像修复、水印检测。">
-    <meta property="og:image" content="/logo.webp">
-
-    <!-- Twitter -->
+    <meta property="og:url" content="https://clean.lazyso.com/doubao/">
+    <meta property="og:title" content="LazyCut - 豆包 / 可灵 去水印工具">
+    <meta property="og:description" content="基于 YOLO 检测 + MiGAN 修复，纯浏览器本地处理，免费、极速、安全。">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://clearcat.lingxaingtools.top">
-    <meta property="twitter:title" content="ClearCat|灵猫去水印 - AI智能水印去除工具">
-    <meta property="twitter:description" content="基于AI技术的智能水印去除工具，支持在线图片去水印、图像修复、水印检测。">
-    <meta property="twitter:image" content="/logo.webp">
+    <meta property="twitter:title" content="LazyCut - 豆包 / 可灵 去水印工具">
+    <meta property="twitter:description" content="基于 YOLO 检测 + MiGAN 修复，纯浏览器本地处理，免费、极速、安全。">
+    <link rel="canonical" href="https://clean.lazyso.com/doubao/">
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "SoftwareApplication",
+                    "name": "LazyCut 豆包/可灵 去水印工具",
+                    "applicationCategory": "ImageEditingApplication",
+                    "operatingSystem": "Web",
+                    "url": "https://clean.lazyso.com/doubao/",
+                    "description": "基于 YOLO 检测与 MiGAN 修复，纯浏览器本地处理，免费极速安全。",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "CNY"
+                    }
+                },
+                {
+                    "@type": "HowTo",
+                    "name": "如何使用 LazyCut 去除 豆包/可灵 水印",
+                    "step": [
+                        {
+                            "@type": "HowToStep",
+                            "name": "上传文件",
+                            "text": "点击上传或拖拽..."
+                        },
+                        {
+                            "@type": "HowToStep",
+                            "name": "等待本地处理",
+                            "text": "浏览器本地 WASM 自动识别..."
+                        },
+                        {
+                            "@type": "HowToStep",
+                            "name": "预览与下载",
+                            "text": "确认无损效果并保存..."
+                        }
+                    ]
+                }
+            ]
+        }
+    </script>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg class='h-10 w-10 text-indigo-500' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310B981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z'/%3E%3C/svg%3E">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#10B981',
+                        'primary-hover': '#059669',
+                        dark: '#0f0f11',
+                        'lazy-dark': '#0f0f11',
+                        'lazy-card': '#27272a',
+                        success: '#10B981',
+                        warn: '#F59E0B',
+                        err: '#EF4444',
+                        info: '#3B82F6'
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(16, 185, 129, 0.15)',
+                        'card': '0 0 20px rgba(0,0,0,0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; background-color: #0f0f11; color: #e5e7eb; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #10B981; border-radius: 4px; }
+        canvas { width: 100%; height: auto; max-height: 520px; }
+        .status.loading { color: #10B981; font-weight: 600; }
+        .compare-stage {
+            position: relative;
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2);
+            --compare-value: 50%;
+            max-height: 520px;
+        }
+        .compare-stage > canvas { display: block; width: 100%; height: auto; max-height: 520px; object-fit: contain; }
+        .compare-result {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            clip-path: inset(0 calc(100% - var(--compare-value)) 0 0);
+            pointer-events: none;
+        }
+        .compare-result canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            max-height: 520px;
+            object-fit: contain;
+        }
+        .compare-handle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            left: calc(var(--compare-value) - 1px);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+            pointer-events: none;
+        }
+        .compare-handle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .compare-handle::after {
+            content: '◀▶';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            line-height: 1;
+            font-weight: 600;
+            letter-spacing: 0;
+            color: rgba(107, 114, 128, 0.9);
+        }
+        .mask-layer {
+            position: absolute;
+            inset: 0;
+            opacity: 0.6;
+            mix-blend-mode: screen;
+            pointer-events: none;
+        }
+        .mask-layer canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            max-height: 520px;
+            object-fit: contain;
+        }
+        .compare-slider { accent-color: #10B981; }
+        body.auto-only .tabs { display: none; }
+        body.auto-only #manualPanel { display: none; }
+        body.auto-only #autoPanel { display: block; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+</head>
+<body class="bg-lazy-dark text-gray-200 antialiased selection:bg-primary selection:text-white flex flex-col min-h-screen auto-only">
+    <header class="sticky top-0 z-50 bg-lazy-dark/90 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <svg class="h-10 w-10 text-primary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"></path>
+                </svg>
+                <div class="flex flex-col leading-tight">
+                    <div class="text-sm font-bold tracking-tight text-primary md:text-xl">
+                        <a href="/" class="hover:text-primary transition-colors" title="懒人去水印">懒人去水印</a>
+                    </div>
+                    <span class="text-xs text-gray-400">Powered by LazySo Labs</span>
+                </div>
+            </div>
+            <nav class="flex gap-2 md:gap-6 text-sm font-medium text-gray-400 items-center">
+                <a href="/" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-white text-sm font-medium">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    返回首页
+                </a>
+                <div class="relative" id="tools-dropdown">
+                    <button id="tools-btn" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-sm transition-all text-white text-sm font-medium group">
+                        更多工具 <span class="group-hover:rotate-180 transition-transform duration-200">▾</span>
+                    </button>
+                    <div id="tools-menu" class="hidden absolute right-0 mt-2 w-64 rounded-xl bg-[#1a1a1c] border border-white/10 shadow-xl overflow-hidden z-50 transform origin-top-right transition-all duration-200 opacity-0 scale-95">
+                        <a href="https://lazyso.com/" class="block px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors flex items-center gap-2">
+                            <span>🏠</span> 回到 LazySo 主站
+                        </a>
+                        <a href="https://wcnkxg1u4986.feishu.cn/base/UTBDb7vwiap3zmsJwuJctoVPnWx?from=from_copylink" target="_blank" class="block px-4 py-3 text-sm text-[#a78bfa] font-medium hover:bg-white/5 hover:text-[#c4b5fd] transition-colors border-t border-white/5 flex items-center gap-2">
+                            <span>🚀</span> 懒人兵器库 (AI 提示词/资源)
+                        </a>
+                        <button id="contact-btn" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-t border-white/5 flex items-center gap-2">
+                            <span>💬</span> 联系作者
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
 
-    <!-- 其他SEO标签 -->
-    <meta name="theme-color" content="#3b82f6">
-    <meta name="application-name" content="ClearCat|灵猫去水印">
-    <link rel="canonical" href="https://clearcat.lingxaingtools.top">
-    <script defer src="https://cloud.umami.is/script.js" data-website-id="7c045d99-b8ef-460a-8072-104895c4897d"></script>
-    <script type="module" crossorigin src="/assets/index-0yn4fk6O.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DQ96FdqS.css">
-  </head>
-  <body>
-    <div id="app"></div>
-  </body>
+    <main class="flex-grow">
+        <section class="relative pt-16 pb-10 text-center px-4 overflow-hidden">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/20 via-lazy-dark to-lazy-dark -z-10"></div>
+            <h1 class="bg-clip-text bg-gradient-to-br font-extrabold from-white mb-6 md:text-5xl text-3xl text-transparent to-gray-400 tracking-tight">
+                豆包 / 可灵 去水印工具
+            </h1>
+            <p class="text-base md:text-lg text-gray-400 max-w-2xl mx-auto">
+                支持多平台水印去除：豆包、可灵、AI生成等，智能识别水印位置，无损画质处理，让您的图片焕然一新
+            </p>
+        </section>
+
+        <section class="px-4 pb-16">
+            <div class="max-w-5xl mx-auto bg-lazy-card rounded-2xl shadow-soft p-6 md:p-8 border border-white/10">
+                <div class="tabs flex justify-center mb-6">
+                    <button id="autoTab" class="px-6 py-2 rounded-full bg-primary text-white text-sm font-medium">智能去水印</button>
+                    <button id="manualTab" class="px-6 py-2 rounded-full bg-white/5 text-gray-400 text-sm font-medium">手动修复</button>
+                </div>
+
+                <div id="uploadArea" class="group relative flex flex-col items-center justify-center w-full h-56 border-2 border-dashed border-white/10 rounded-xl bg-white/5 hover:bg-white/10 hover:border-primary/50 transition-all cursor-pointer">
+                    <div class="text-lg font-semibold">拖拽图片到这里</div>
+                    <div class="text-sm text-gray-400">支持同时上传多张，JPG / PNG / WEBP，点击上传、拖拽或 Ctrl+V 粘贴</div>
+                    <input type="file" id="imageInput" accept="image/*" multiple hidden>
+                    <button id="selectBtn" class="mt-3 px-5 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium">选择图片</button>
+                </div>
+
+                <div class="status text-center text-sm text-gray-400 mt-4" id="statusText">请上传图片...</div>
+
+                <div id="autoPanel" class="panel mt-6">
+                    <div class="flex flex-wrap gap-3 justify-center mb-4">
+                        <button id="processBtn" class="px-5 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed" disabled>开始去水印</button>
+                        <button id="maskToggleBtn" class="px-5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium">显示模版</button>
+                        <button id="downloadBtn" class="px-5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed" disabled>下载结果</button>
+                        <button id="downloadAllBtn" class="px-5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed" style="display:none" disabled>批量下载</button>
+                    </div>
+                    <div id="queueList" class="mb-6 space-y-2"></div>
+                    <div class="flex flex-col gap-3">
+                        <div class="compare-stage" id="compareStage">
+                            <canvas id="autoOriginalCanvas"></canvas>
+                            <div class="compare-result hidden" id="compareResultWrap">
+                                <canvas id="autoResultCanvas"></canvas>
+                            </div>
+                            <div class="compare-handle hidden" id="compareHandle"></div>
+                            <div class="mask-layer hidden" id="maskWrap">
+                                <canvas id="autoMaskCanvas"></canvas>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:flex-row md:items-center gap-3 text-sm text-gray-400">
+                            <div class="flex items-center gap-3">
+                                <span class="text-gray-300">对比滑块</span>
+                                <input id="compareSlider" class="compare-slider w-48" type="range" min="0" max="100" value="50" disabled>
+                            </div>
+                            <span>支持 JPG / PNG / WEBP，Ctrl+V 粘贴更快</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="manualPanel" class="panel hidden mt-6">
+                    <div class="flex flex-wrap gap-3 justify-center mb-6">
+                        <div class="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm text-gray-300">
+                            <label for="brushSize">画笔大小</label>
+                            <input id="brushSize" type="range" min="5" max="80" value="24">
+                        </div>
+                        <button id="clearMaskBtn" class="px-5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed" disabled>清空涂抹</button>
+                        <button id="manualProcessBtn" class="px-5 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed" disabled>开始修复</button>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-3">
+                            <div class="text-sm text-gray-300 mb-2">原图</div>
+                            <canvas id="manualOriginalCanvas" class="rounded-lg border border-white/10 bg-black/20"></canvas>
+                        </div>
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-3">
+                            <div class="text-sm text-gray-300 mb-2">手动 Mask</div>
+                            <canvas id="manualMaskCanvas" class="rounded-lg border border-white/10 bg-black/20"></canvas>
+                        </div>
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-3">
+                            <div class="text-sm text-gray-300 mb-2">最终结果</div>
+                            <canvas id="manualResultCanvas" class="rounded-lg border border-white/10 bg-black/20"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-lazy-card text-gray-400 py-6 md:pt-10 md:pb-8 border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mb-8">
+                <div class="col-span-1 md:col-span-2">
+                    <h5 class="text-2xl font-bold mb-4 text-gray-200">LazyCut 去水印神器</h5>
+                    <p class="text-gray-500 text-sm max-w-sm">豆包 / 可灵去水印工具，仅供学习交流使用</p>
+                </div>
+                <div>
+                    <h6 class="font-bold mb-2 md:mb-4 text-gray-200">链接</h6>
+                    <ul class="space-y-1 md:space-y-2 text-sm text-gray-500">
+                        <li><a href="https://lazyso.com/insider/" target="_blank" class="hover:text-primary transition-colors">订阅 LazySo 会员</a></li>
+                        <li><a href="/terms.html" class="hover:text-primary transition-colors">使用条款</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-white/10 pt-6 text-center text-sm text-gray-600">
+                <p class="mb-2">本工具由 <a href="https://lazyso.com" class="text-gray-300 hover:text-white transition-colors">LazySo 懒人搜索</a> 提供技术支持。探索更多自动化变现玩法 -> <a href="https://lazyso.com" class="text-gray-300 hover:text-white transition-colors">进入主站</a></p>
+                <p>&copy; 2026 LazySo. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="contact-modal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity opacity-0" id="modal-backdrop"></div>
+        <div class="relative min-h-screen flex items-center justify-center p-4">
+            <div class="bg-[#1a1a1c] border border-white/10 rounded-2xl max-w-sm w-full p-6 shadow-2xl transform scale-95 opacity-0 transition-all duration-300" id="modal-content">
+                <button id="modal-close" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <h3 class="text-xl font-bold text-white mb-6 text-center">联系作者，获取更多优质工具分享！</h3>
+                <div class="bg-white p-1 rounded-xl mb-6 mx-auto w-fit">
+                    <img src="/vx_qrcode.jpg" alt="WeChat QR Code" class="w-64 h-64 object-contain">
+                </div>
+                <div class="text-center space-y-4">
+                    <p class="text-gray-400 text-sm">微信号: <span class="text-white font-mono select-all">lazyhelper1</span></p>
+                    <button id="copy-wx-btn" class="w-full py-2.5 bg-primary hover:bg-primary-hover text-white rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                        点击复制微信号
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if ort is loaded
+        if (typeof ort === 'undefined') {
+            console.error('ONNX Runtime failed to load');
+            window.addEventListener('load', () => {
+                const status = document.getElementById('statusText');
+                if (status) status.textContent = '错误：核心组件加载失败，请检查网络或刷新页面';
+            });
+        }
+
+        ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/";
+
+        const MODELS = {
+            yolo: '/doubao/yolo.onnx',
+            migan: '/doubao/migan.onnx'
+        };
+
+        const state = {
+            originalImageData: null,
+            yoloSession: null,
+            miganSession: null,
+            isProcessing: false,
+            mode: 'auto'
+        };
+
+        const ui = {
+            input: document.getElementById('imageInput'),
+            selectBtn: document.getElementById('selectBtn'),
+            uploadArea: document.getElementById('uploadArea'),
+            status: document.getElementById('statusText'),
+            autoTab: document.getElementById('autoTab'),
+            manualTab: document.getElementById('manualTab'),
+            autoPanel: document.getElementById('autoPanel'),
+            manualPanel: document.getElementById('manualPanel'),
+            autoOriginalCanvas: document.getElementById('autoOriginalCanvas'),
+            autoMaskCanvas: document.getElementById('autoMaskCanvas'),
+            autoResultCanvas: document.getElementById('autoResultCanvas'),
+            manualOriginalCanvas: document.getElementById('manualOriginalCanvas'),
+            manualMaskCanvas: document.getElementById('manualMaskCanvas'),
+            manualResultCanvas: document.getElementById('manualResultCanvas'),
+            processBtn: document.getElementById('processBtn'),
+            manualProcessBtn: document.getElementById('manualProcessBtn'),
+            clearMaskBtn: document.getElementById('clearMaskBtn'),
+            brushSize: document.getElementById('brushSize'),
+            compareSlider: document.getElementById('compareSlider'),
+            compareStage: document.getElementById('compareStage'),
+            compareResultWrap: document.getElementById('compareResultWrap'),
+            compareHandle: document.getElementById('compareHandle'),
+            maskToggleBtn: document.getElementById('maskToggleBtn'),
+            maskWrap: document.getElementById('maskWrap'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            downloadAllBtn: document.getElementById('downloadAllBtn'),
+            queueList: document.getElementById('queueList')
+        };
+
+        function setStatus(text, loading = false) {
+            ui.status.textContent = text;
+            ui.status.classList.toggle('loading', loading);
+        }
+
+        function updateCompare(value) {
+            const percent = Math.max(0, Math.min(100, Number(value)));
+            if (ui.compareStage) {
+                ui.compareStage.style.setProperty('--compare-value', `${percent}%`);
+            }
+        }
+
+        function setCompareReady(ready) {
+            ui.compareResultWrap.classList.toggle('hidden', !ready);
+            ui.compareHandle.classList.toggle('hidden', !ready);
+            ui.compareSlider.disabled = !ready;
+            if (!ready) {
+                updateCompare(50);
+            }
+        }
+
+        function setMaskVisible(visible) {
+            ui.maskWrap.classList.toggle('hidden', !visible);
+            ui.maskToggleBtn.textContent = visible ? '隐藏模版' : '显示模版';
+            ui.maskToggleBtn.classList.toggle('bg-primary', visible);
+            ui.maskToggleBtn.classList.toggle('hover:bg-primary-hover', visible);
+            ui.maskToggleBtn.classList.toggle('bg-white/10', !visible);
+            ui.maskToggleBtn.classList.toggle('hover:bg-white/20', !visible);
+        }
+
+        const preload = {
+            controller: null,
+            running: false,
+            done: false,
+            promise: null
+        };
+
+        function isWeakNetwork() {
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (!connection) return false;
+            if (connection.saveData) return true;
+            return ['slow-2g', '2g'].includes(connection.effectiveType);
+        }
+
+        function cancelPreload() {
+            if (preload.controller) {
+                preload.controller.abort();
+            }
+            preload.controller = null;
+            preload.running = false;
+        }
+
+        function startPreload() {
+            if (preload.running || preload.done || isWeakNetwork()) return;
+            preload.running = true;
+            preload.controller = new AbortController();
+            const { signal } = preload.controller;
+            preload.promise = (async () => {
+                const yoloRes = await fetch(MODELS.yolo, { signal });
+                if (!yoloRes.ok) throw new Error('yolo_preload_failed');
+                const yoloBuffer = await yoloRes.arrayBuffer();
+                if (!state.yoloSession) {
+                    state.yoloSession = await ort.InferenceSession.create(yoloBuffer, {
+                        executionProviders: ['wasm']
+                    });
+                }
+                const miganRes = await fetch(MODELS.migan, { signal });
+                if (!miganRes.ok) throw new Error('migan_preload_failed');
+                const miganBuffer = await miganRes.arrayBuffer();
+                if (!state.miganSession) {
+                    state.miganSession = await ort.InferenceSession.create(miganBuffer, {
+                        executionProviders: ['wasm']
+                    });
+                }
+                preload.done = true;
+            })().catch((err) => {
+                if (err && err.name === 'AbortError') return;
+            }).finally(() => {
+                preload.running = false;
+            });
+        }
+
+        function schedulePreload() {
+            if (isWeakNetwork()) return;
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(() => startPreload(), { timeout: 4000 });
+            } else {
+                setTimeout(() => startPreload(), 2000);
+            }
+        }
+
+        async function fileToImageData(file) {
+            const bitmap = await createImageBitmap(file);
+            const canvas = document.createElement('canvas');
+            canvas.width = bitmap.width;
+            canvas.height = bitmap.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(bitmap, 0, 0);
+            return ctx.getImageData(0, 0, canvas.width, canvas.height);
+        }
+
+        async function blobToImageData(blob) {
+            const bitmap = await createImageBitmap(blob);
+            const canvas = document.createElement('canvas');
+            canvas.width = bitmap.width;
+            canvas.height = bitmap.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(bitmap, 0, 0);
+            return ctx.getImageData(0, 0, canvas.width, canvas.height);
+        }
+
+        function drawImageData(canvas, imageData) {
+            canvas.width = imageData.width;
+            canvas.height = imageData.height;
+            const ctx = canvas.getContext('2d');
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        function clearCanvas(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        let imageQueue = [];
+        let processedCount = 0;
+        let selectedBatchId = null;
+        function setBatchMode(isBatch) {
+            ui.maskToggleBtn.disabled = isBatch;
+            ui.downloadBtn.disabled = true;
+            ui.compareSlider.disabled = isBatch;
+            setCompareReady(false);
+            ui.downloadAllBtn.style.display = isBatch ? 'inline-flex' : 'none';
+        }
+
+        function resetQueue() {
+            imageQueue.forEach(item => {
+                if (item.originalUrl) URL.revokeObjectURL(item.originalUrl);
+                if (item.processedUrl) URL.revokeObjectURL(item.processedUrl);
+            });
+            imageQueue = [];
+            processedCount = 0;
+            ui.queueList.innerHTML = '';
+            ui.downloadAllBtn.disabled = true;
+            selectedBatchId = null;
+            setBatchMode(false);
+        }
+
+        function getSelectedItem() {
+            return imageQueue.find(item => item.id === selectedBatchId) || imageQueue[0];
+        }
+
+        async function renderSelectedPreview() {
+            const item = getSelectedItem();
+            if (!item) return;
+            const originalData = await fileToImageData(item.file);
+            drawImageData(ui.autoOriginalCanvas, originalData);
+            if (item.processedBlob) {
+                const processedData = await blobToImageData(item.processedBlob);
+                drawImageData(ui.autoResultCanvas, processedData);
+                setCompareReady(true);
+                ui.compareSlider.disabled = false;
+            } else {
+                clearCanvas(ui.autoResultCanvas);
+                setCompareReady(false);
+                ui.compareSlider.disabled = true;
+            }
+        }
+
+        function setSelectedItem(id) {
+            selectedBatchId = id;
+            const activeClass = ['ring-1', 'ring-primary/60'];
+            imageQueue.forEach(item => {
+                const row = document.getElementById(`row-${item.id}`);
+                if (!row) return;
+                if (item.id === id) {
+                    row.classList.add(...activeClass);
+                } else {
+                    row.classList.remove(...activeClass);
+                }
+            });
+            renderSelectedPreview();
+        }
+
+        function addFiles(files) {
+            const list = Array.from(files || []).filter(f => f && f.type.startsWith('image/'));
+            list.forEach((file, idx) => {
+                const id = `${Date.now()}_${imageQueue.length + idx}`;
+                const originalUrl = URL.createObjectURL(file);
+                const item = { id, file, name: file.name || `image_${id}.png`, status: 'pending', originalUrl, processedBlob: null, processedUrl: '' };
+                imageQueue.push(item);
+                const row = document.createElement('div');
+                row.id = `row-${item.id}`;
+                row.className = 'flex flex-wrap items-center justify-between gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 cursor-pointer';
+                const left = document.createElement('div');
+                left.className = 'flex items-center gap-3 min-w-0';
+                const preview = document.createElement('img');
+                preview.id = `preview-${item.id}`;
+                preview.src = item.originalUrl;
+                preview.alt = item.name;
+                preview.className = 'w-16 h-16 rounded-lg object-cover border border-white/10 bg-white/5';
+                const nameWrap = document.createElement('div');
+                nameWrap.className = 'min-w-0';
+                const nameEl = document.createElement('div');
+                nameEl.className = 'text-sm text-gray-200 truncate';
+                nameEl.textContent = item.name;
+                const statusEl = document.createElement('div');
+                statusEl.className = 'text-xs text-gray-400';
+                statusEl.id = `status-${item.id}`;
+                statusEl.textContent = '待处理';
+                nameWrap.appendChild(nameEl);
+                nameWrap.appendChild(statusEl);
+                left.appendChild(preview);
+                left.appendChild(nameWrap);
+                const btn = document.createElement('button');
+                btn.id = `download-${item.id}`;
+                btn.className = 'px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed';
+                btn.textContent = '下载';
+                btn.disabled = true;
+                btn.onclick = () => {
+                    if (!item.processedUrl) return;
+                    const a = document.createElement('a');
+                    a.href = item.processedUrl;
+                    a.download = `cleaned_${item.name.replace(/\.[^.]+$/, '')}.png`;
+                    a.click();
+                };
+                row.addEventListener('click', () => setSelectedItem(item.id));
+                row.appendChild(left);
+                row.appendChild(btn);
+                ui.queueList.appendChild(row);
+            });
+            if (list.length > 0) {
+                ui.processBtn.disabled = false;
+                setBatchMode(imageQueue.length > 1);
+                if (!selectedBatchId) {
+                    setSelectedItem(imageQueue[0].id);
+                }
+            }
+        }
+
+        async function runBatch() {
+            if (imageQueue.length === 0) return;
+            if (state.isProcessing) return;
+            state.isProcessing = true;
+            ui.processBtn.disabled = true;
+            try {
+                cancelPreload();
+                await detector.load();
+                await inpainter.load();
+                for (const item of imageQueue) {
+                    if (item.status !== 'pending') continue;
+                    const statusEl = document.getElementById(`status-${item.id}`);
+                    statusEl.textContent = '处理中...';
+                    setStatus('正在检测水印...', true);
+                    const imageData = await fileToImageData(item.file);
+                    const { detections, mask } = await detector.predict(imageData);
+                    if (!detections || detections.length === 0) {
+                        item.status = 'failed';
+                        statusEl.textContent = '未检测到水印';
+                        continue;
+                    }
+                    const result = await inpainter.inpaint(imageData, mask);
+                    const off = document.createElement('canvas');
+                    drawImageData(off, result);
+                    const blob = await new Promise(resolve => off.toBlob(resolve, 'image/png'));
+                    item.processedBlob = blob;
+                    item.processedUrl = URL.createObjectURL(blob);
+                    item.status = 'completed';
+                    processedCount++;
+                    statusEl.textContent = '处理完成';
+                    const dBtn = document.getElementById(`download-${item.id}`);
+                    if (dBtn) dBtn.disabled = false;
+                    const previewEl = document.getElementById(`preview-${item.id}`);
+                    if (previewEl) previewEl.src = item.processedUrl;
+                    if (item.id === selectedBatchId) {
+                        await renderSelectedPreview();
+                    }
+                }
+                setStatus('处理完成');
+                if (processedCount > 0) ui.downloadAllBtn.disabled = false;
+            } catch (err) {
+                setStatus('处理出错：' + err.message);
+            } finally {
+                state.isProcessing = false;
+                ui.processBtn.disabled = false;
+            }
+        }
+
+        async function downloadAllBatch() {
+            const completed = imageQueue.filter(x => x.status === 'completed');
+            if (completed.length === 0) return;
+            if (!window.JSZip) {
+                setStatus('批量下载组件未加载');
+                return;
+            }
+            const zip = new JSZip();
+            completed.forEach(item => {
+                const filename = `cleaned_${item.name.replace(/\.[^.]+$/, '')}.png`;
+                zip.file(filename, item.processedBlob);
+            });
+            const blob = await zip.generateAsync({ type: 'blob' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `cleaned_${Date.now()}.zip`;
+            a.click();
+        }
+
+        function createMaskFromDetections(detections, width, height) {
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = 'white';
+            detections.forEach(det => {
+                const [x1, y1, x2, y2] = det.bbox;
+                const pad = 10;
+                const left = Math.max(0, x1 - pad);
+                const top = Math.max(0, y1 - pad);
+                const right = Math.min(width, x2 + pad);
+                const bottom = Math.min(height, y2 + pad);
+                if (right > left && bottom > top) {
+                    ctx.fillRect(left, top, right - left, bottom - top);
+                }
+            });
+            return ctx.getImageData(0, 0, width, height);
+        }
+
+        function resizeImage(imageData, targetWidth, targetHeight, smoothing = true) {
+            const canvas = document.createElement('canvas');
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = smoothing;
+            if (smoothing) {
+                ctx.imageSmoothingQuality = 'high';
+            }
+            const source = document.createElement('canvas');
+            source.width = imageData.width;
+            source.height = imageData.height;
+            source.getContext('2d').putImageData(imageData, 0, 0);
+            ctx.drawImage(source, 0, 0, imageData.width, imageData.height, 0, 0, targetWidth, targetHeight);
+            return ctx.getImageData(0, 0, targetWidth, targetHeight);
+        }
+
+        function imageDataToTensor(imageData, type, mean = [0, 0, 0], std = [1, 1, 1]) {
+            const { data, width, height } = imageData;
+            const size = width * height;
+            if (type === 'uint8') {
+                const buffer = new Uint8Array(size * 3);
+                for (let i = 0; i < size; i++) {
+                    const offset = i * 4;
+                    buffer[i] = data[offset];
+                    buffer[size + i] = data[offset + 1];
+                    buffer[size * 2 + i] = data[offset + 2];
+                }
+                return new ort.Tensor('uint8', buffer, [1, 3, height, width]);
+            }
+            const buffer = new Float32Array(size * 3);
+            for (let i = 0; i < size; i++) {
+                const offset = i * 4;
+                buffer[i] = (data[offset] / 255 - mean[0]) / std[0];
+                buffer[size + i] = (data[offset + 1] / 255 - mean[1]) / std[1];
+                buffer[size * 2 + i] = (data[offset + 2] / 255 - mean[2]) / std[2];
+            }
+            return new ort.Tensor('float32', buffer, [1, 3, height, width]);
+        }
+
+        class WatermarkDetector {
+            constructor() {
+                this.inputSize = 640;
+                this.confidenceThreshold = 0.25;
+                this.iouThreshold = 0.5;
+            }
+
+            async load() {
+                if (!state.yoloSession) {
+                    setStatus("正在加载模型...", true);
+                    state.yoloSession = await ort.InferenceSession.create(MODELS.yolo, {
+                        executionProviders: ['wasm']
+                    });
+                }
+            }
+
+            letterbox(imageData, size) {
+                const { width, height } = imageData;
+                const scale = Math.min(size / width, size / height);
+                const newWidth = Math.round(width * scale);
+                const newHeight = Math.round(height * scale);
+                const padX = Math.round((size - newWidth) / 2);
+                const padY = Math.round((size - newHeight) / 2);
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = 'black';
+                ctx.fillRect(0, 0, size, size);
+                const source = document.createElement('canvas');
+                source.width = width;
+                source.height = height;
+                source.getContext('2d').putImageData(imageData, 0, 0);
+                ctx.drawImage(source, 0, 0, width, height, padX, padY, newWidth, newHeight);
+                return {
+                    imageData: ctx.getImageData(0, 0, size, size),
+                    scale,
+                    padX,
+                    padY,
+                    originalWidth: width,
+                    originalHeight: height
+                };
+            }
+
+            async predict(imageData) {
+                const session = state.yoloSession;
+                const preprocessInfo = this.letterbox(imageData, this.inputSize);
+                const tensor = imageDataToTensor(preprocessInfo.imageData, 'float32', [0, 0, 0], [1, 1, 1]);
+                const results = await session.run({ [session.inputNames[0]]: tensor });
+                const detections = this.postprocess(results, preprocessInfo);
+                const mask = createMaskFromDetections(detections, preprocessInfo.originalWidth, preprocessInfo.originalHeight);
+                return { detections, mask };
+            }
+
+            postprocess(results, preprocessInfo) {
+                let output = null;
+                Object.values(results).forEach(value => {
+                    if (value.dims.length === 3) {
+                        output = value;
+                    }
+                });
+                if (!output) {
+                    throw new Error('No detection output found');
+                }
+                let data;
+                let count;
+                if (output.dims[1] === 5) {
+                    count = output.dims[2];
+                    data = output.data;
+                } else if (output.dims[2] === 5) {
+                    count = output.dims[1];
+                    data = new Float32Array(output.data.length);
+                    for (let i = 0; i < count; i++) {
+                        for (let j = 0; j < 5; j++) {
+                            data[j * count + i] = output.data[i * 5 + j];
+                        }
+                    }
+                } else {
+                    throw new Error(`Unexpected output shape: ${output.dims}`);
+                }
+                const detections = [];
+                for (let i = 0; i < count; i++) {
+                    const cx = data[i];
+                    const cy = data[count + i];
+                    const w = data[count * 2 + i];
+                    const h = data[count * 3 + i];
+                    const conf = data[count * 4 + i];
+                    if (conf < this.confidenceThreshold) continue;
+                    const x1 = cx - w / 2;
+                    const y1 = cy - h / 2;
+                    const x2 = cx + w / 2;
+                    const y2 = cy + h / 2;
+                    detections.push({ bbox: [x1, y1, x2, y2], confidence: conf, classId: 0 });
+                }
+                if (detections.length === 0) return [];
+                const best = detections.reduce((prev, current) => current.confidence > prev.confidence ? current : prev);
+                const { scale, padX, padY, originalWidth, originalHeight } = preprocessInfo;
+                return [{
+                    bbox: [
+                        Math.max(0, Math.min(originalWidth, (best.bbox[0] - padX) / scale)),
+                        Math.max(0, Math.min(originalHeight, (best.bbox[1] - padY) / scale)),
+                        Math.max(0, Math.min(originalWidth, (best.bbox[2] - padX) / scale)),
+                        Math.max(0, Math.min(originalHeight, (best.bbox[3] - padY) / scale))
+                    ],
+                    confidence: best.confidence,
+                    classId: best.classId
+                }];
+            }
+        }
+
+        class Inpainter {
+            constructor() {
+                this.inputSize = 512;
+            }
+
+            async load() {
+                if (!state.miganSession) {
+                    setStatus("正在加载模型...", true);
+                    state.miganSession = await ort.InferenceSession.create(MODELS.migan, {
+                        executionProviders: ['wasm']
+                    });
+                }
+            }
+
+            processMask(imageData, invert = true) {
+                const { data, width, height } = imageData;
+                const output = new Uint8ClampedArray(data.length);
+                for (let i = 0; i < width * height; i++) {
+                    const offset = i * 4;
+                    let value = data[offset];
+                    if (invert) value = 255 - value;
+                    value = value < 255 ? 0 : 255;
+                    output[offset] = value;
+                    output[offset + 1] = value;
+                    output[offset + 2] = value;
+                    output[offset + 3] = 255;
+                }
+                return new ImageData(output, width, height);
+            }
+
+            prepareMaskTensor(imageData) {
+                const { data, width, height } = imageData;
+                const mask = new Uint8Array(width * height);
+                for (let i = 0; i < width * height; i++) {
+                    mask[i] = data[i * 4];
+                }
+                return new ort.Tensor('uint8', mask, [1, 1, height, width]);
+            }
+
+            processOutput(results, width, height) {
+                const output = results[Object.keys(results)[0]];
+                const data = output.data;
+                const size = width * height;
+                const image = new Uint8ClampedArray(size * 4);
+                if (output.type === 'uint8') {
+                    for (let i = 0; i < size; i++) {
+                        const offset = i * 4;
+                        image[offset] = data[i];
+                        image[offset + 1] = data[size + i];
+                        image[offset + 2] = data[size * 2 + i];
+                        image[offset + 3] = 255;
+                    }
+                } else {
+                    for (let i = 0; i < size; i++) {
+                        const offset = i * 4;
+                        let r = data[i];
+                        let g = data[size + i];
+                        let b = data[size * 2 + i];
+                        if (r <= 1 && r >= -1) {
+                            r = Math.round((r * 0.5 + 0.5) * 255);
+                            g = Math.round((g * 0.5 + 0.5) * 255);
+                            b = Math.round((b * 0.5 + 0.5) * 255);
+                        } else {
+                            r = Math.round(r * 255);
+                            g = Math.round(g * 255);
+                            b = Math.round(b * 255);
+                        }
+                        image[offset] = Math.max(0, Math.min(255, r));
+                        image[offset + 1] = Math.max(0, Math.min(255, g));
+                        image[offset + 2] = Math.max(0, Math.min(255, b));
+                        image[offset + 3] = 255;
+                    }
+                }
+                return new ImageData(image, width, height);
+            }
+
+            async inpaint(imageData, maskImageData) {
+                const processedImage = resizeImage(imageData, this.inputSize, this.inputSize, true);
+                const processedMask = this.processMask(resizeImage(maskImageData, this.inputSize, this.inputSize, false), true);
+                const imageTensor = imageDataToTensor(processedImage, 'uint8');
+                const maskTensor = this.prepareMaskTensor(processedMask);
+                const session = state.miganSession;
+                const feeds = {};
+                if (session.inputNames.length >= 2) {
+                    feeds[session.inputNames[0]] = imageTensor;
+                    feeds[session.inputNames[1]] = maskTensor;
+                } else {
+                    feeds.image = imageTensor;
+                    feeds.mask = maskTensor;
+                }
+                const results = await session.run(feeds);
+                const outputImage = this.processOutput(results, this.inputSize, this.inputSize);
+                const resizedOutput = resizeImage(outputImage, imageData.width, imageData.height, true);
+                const outputData = new Uint8ClampedArray(imageData.data);
+                for (let i = 0; i < imageData.width * imageData.height; i++) {
+                    const offset = i * 4;
+                    if (maskImageData.data[offset] > 128) {
+                        outputData[offset] = resizedOutput.data[offset];
+                        outputData[offset + 1] = resizedOutput.data[offset + 1];
+                        outputData[offset + 2] = resizedOutput.data[offset + 2];
+                    }
+                }
+                return new ImageData(outputData, imageData.width, imageData.height);
+            }
+        }
+
+        const detector = new WatermarkDetector();
+        const inpainter = new Inpainter();
+
+        function setMode(mode) {
+            state.mode = mode;
+            const autoActive = mode === 'auto';
+            ui.autoTab.classList.toggle('active', autoActive);
+            ui.manualTab.classList.toggle('active', !autoActive);
+            ui.autoPanel.classList.toggle('hidden', !autoActive);
+            ui.manualPanel.classList.toggle('hidden', autoActive);
+        }
+
+        async function handleFile(file) {
+            if (!file) return;
+            state.originalImageData = await fileToImageData(file);
+            drawImageData(ui.autoOriginalCanvas, state.originalImageData);
+            drawImageData(ui.manualOriginalCanvas, state.originalImageData);
+            ui.autoMaskCanvas.width = state.originalImageData.width;
+            ui.autoMaskCanvas.height = state.originalImageData.height;
+            ui.manualMaskCanvas.width = state.originalImageData.width;
+            ui.manualMaskCanvas.height = state.originalImageData.height;
+            ui.manualResultCanvas.width = state.originalImageData.width;
+            ui.manualResultCanvas.height = state.originalImageData.height;
+            ui.autoResultCanvas.width = state.originalImageData.width;
+            ui.autoResultCanvas.height = state.originalImageData.height;
+            clearCanvas(ui.autoMaskCanvas);
+            clearCanvas(ui.autoResultCanvas);
+            clearCanvas(ui.manualResultCanvas);
+            setCompareReady(false);
+            setMaskVisible(false);
+            const maskCtx = ui.manualMaskCanvas.getContext('2d');
+            maskCtx.fillStyle = 'black';
+            maskCtx.fillRect(0, 0, ui.manualMaskCanvas.width, ui.manualMaskCanvas.height);
+            ui.processBtn.disabled = false;
+            ui.manualProcessBtn.disabled = false;
+            ui.clearMaskBtn.disabled = false;
+            ui.downloadBtn.disabled = true;
+            setStatus("图片已加载，准备处理");
+        }
+
+        ui.selectBtn.addEventListener('click', () => ui.input.click());
+        ui.input.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files || []);
+            if (files.length > 1) {
+                addFiles(files);
+                e.target.value = '';
+                setStatus(`已添加 ${files.length} 张图片`);
+            } else {
+                resetQueue();
+                const file = files[0];
+                await handleFile(file);
+            }
+        });
+
+        ui.uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            ui.uploadArea.classList.add('dragover');
+        });
+        ui.uploadArea.addEventListener('dragleave', () => {
+            ui.uploadArea.classList.remove('dragover');
+        });
+        ui.uploadArea.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            ui.uploadArea.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files || []);
+            if (files.length > 1) {
+                addFiles(files);
+                setStatus(`已添加 ${files.length} 张图片`);
+            } else {
+                resetQueue();
+                const file = files[0];
+                await handleFile(file);
+            }
+        });
+
+        document.addEventListener('paste', async (e) => {
+            const items = e.clipboardData && e.clipboardData.items;
+            if (!items) return;
+            for (const item of items) {
+                if (item.type.startsWith('image/')) {
+                    const file = item.getAsFile();
+                    await handleFile(file);
+                    break;
+                }
+            }
+        });
+
+        ui.autoTab.addEventListener('click', () => setMode('auto'));
+        ui.manualTab.addEventListener('click', () => {
+            window.location.href = '/manual-inpaint';
+        });
+
+        window.addEventListener('load', schedulePreload);
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                cancelPreload();
+            }
+        });
+
+        ui.compareSlider.addEventListener('input', (e) => {
+            updateCompare(e.target.value);
+        });
+
+        ui.maskToggleBtn.addEventListener('click', () => {
+            const visible = ui.maskWrap.classList.contains('hidden');
+            setMaskVisible(visible);
+        });
+
+        ui.processBtn.addEventListener('click', async () => {
+            if (imageQueue.length > 0) {
+                await runBatch();
+                return;
+            }
+            if (!state.originalImageData || state.isProcessing) return;
+            state.isProcessing = true;
+            ui.processBtn.disabled = true;
+            try {
+                cancelPreload();
+                await detector.load();
+                await inpainter.load();
+                setStatus("正在检测水印...", true);
+                setCompareReady(false);
+                const { detections, mask } = await detector.predict(state.originalImageData);
+                drawImageData(ui.autoMaskCanvas, mask);
+                if (detections.length === 0) {
+                    setStatus("未检测到水印");
+                    setCompareReady(false);
+                    ui.downloadBtn.disabled = true;
+                    return;
+                }
+                setStatus(`检测到 ${detections.length} 个水印，正在修复...`, true);
+                const result = await inpainter.inpaint(state.originalImageData, mask);
+                drawImageData(ui.autoOriginalCanvas, result);
+                drawImageData(ui.autoResultCanvas, state.originalImageData);
+                setCompareReady(true);
+                ui.downloadBtn.disabled = false;
+                setStatus("处理完成");
+            } catch (err) {
+                setStatus("处理出错：" + err.message);
+                ui.downloadBtn.disabled = true;
+            } finally {
+                state.isProcessing = false;
+                ui.processBtn.disabled = false;
+            }
+        });
+
+        ui.downloadAllBtn.addEventListener('click', downloadAllBatch);
+
+        ui.downloadBtn.addEventListener('click', () => {
+            if (ui.autoOriginalCanvas.width === 0 || ui.autoOriginalCanvas.height === 0) return;
+            const link = document.createElement('a');
+            link.download = 'cleaned.png';
+            link.href = ui.autoOriginalCanvas.toDataURL('image/png');
+            link.click();
+        });
+
+        (function initCompareDrag() {
+            let dragging = false;
+            function clientXToPercent(clientX) {
+                const rect = ui.compareStage.getBoundingClientRect();
+                const x = Math.max(rect.left, Math.min(rect.right, clientX));
+                const percent = ((x - rect.left) / rect.width) * 100;
+                return Math.round(percent);
+            }
+            ui.compareStage.addEventListener('pointerdown', (e) => {
+                if (ui.compareSlider.disabled) return;
+                dragging = true;
+                ui.compareStage.setPointerCapture(e.pointerId);
+                const p = clientXToPercent(e.clientX);
+                ui.compareSlider.value = String(p);
+                updateCompare(p);
+            });
+            ui.compareStage.addEventListener('pointermove', (e) => {
+                if (!dragging || ui.compareSlider.disabled) return;
+                const p = clientXToPercent(e.clientX);
+                ui.compareSlider.value = String(p);
+                updateCompare(p);
+            });
+            ui.compareStage.addEventListener('pointerup', (e) => {
+                dragging = false;
+                ui.compareStage.releasePointerCapture(e.pointerId);
+            });
+            ui.compareStage.addEventListener('pointerleave', () => {
+                dragging = false;
+            });
+        })();
+
+        ui.manualProcessBtn.addEventListener('click', async () => {
+            if (!state.originalImageData || state.isProcessing) return;
+            state.isProcessing = true;
+            ui.manualProcessBtn.disabled = true;
+            try {
+                cancelPreload();
+                await inpainter.load();
+                setStatus("正在手动修复...", true);
+                const maskData = ui.manualMaskCanvas.getContext('2d').getImageData(0, 0, ui.manualMaskCanvas.width, ui.manualMaskCanvas.height);
+                const result = await inpainter.inpaint(state.originalImageData, maskData);
+                drawImageData(ui.manualResultCanvas, result);
+                setStatus("处理完成");
+            } catch (err) {
+                setStatus("处理出错：" + err.message);
+            } finally {
+                state.isProcessing = false;
+                ui.manualProcessBtn.disabled = false;
+            }
+        });
+
+        ui.clearMaskBtn.addEventListener('click', () => {
+            if (!state.originalImageData) return;
+            const ctx = ui.manualMaskCanvas.getContext('2d');
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, ui.manualMaskCanvas.width, ui.manualMaskCanvas.height);
+        });
+
+        let drawing = false;
+        ui.manualMaskCanvas.addEventListener('pointerdown', (e) => {
+            if (!state.originalImageData) return;
+            drawing = true;
+            ui.manualMaskCanvas.setPointerCapture(e.pointerId);
+            drawBrush(e);
+        });
+        ui.manualMaskCanvas.addEventListener('pointermove', (e) => {
+            if (!drawing) return;
+            drawBrush(e);
+        });
+        ui.manualMaskCanvas.addEventListener('pointerup', (e) => {
+            drawing = false;
+            ui.manualMaskCanvas.releasePointerCapture(e.pointerId);
+        });
+        ui.manualMaskCanvas.addEventListener('pointerleave', () => {
+            drawing = false;
+        });
+
+        function drawBrush(e) {
+            const rect = ui.manualMaskCanvas.getBoundingClientRect();
+            const scaleX = ui.manualMaskCanvas.width / rect.width;
+            const scaleY = ui.manualMaskCanvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+            const size = parseInt(ui.brushSize.value, 10);
+            const ctx = ui.manualMaskCanvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.ellipse(x, y, size / 2, size / 2, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    </script>
+    <script>
+        const toolsBtn = document.getElementById('tools-btn');
+        const toolsMenu = document.getElementById('tools-menu');
+        const toolsDropdown = document.getElementById('tools-dropdown');
+        const contactBtn = document.getElementById('contact-btn');
+        const modal = document.getElementById('contact-modal');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const modalContent = document.getElementById('modal-content');
+        const modalClose = document.getElementById('modal-close');
+        const copyWxBtn = document.getElementById('copy-wx-btn');
+
+        function toggleDropdown() {
+            const isHidden = toolsMenu.classList.contains('hidden');
+            if (isHidden) {
+                toolsMenu.classList.remove('hidden');
+                void toolsMenu.offsetWidth;
+                toolsMenu.classList.remove('opacity-0', 'scale-95');
+                toolsMenu.classList.add('opacity-100', 'scale-100');
+            } else {
+                toolsMenu.classList.remove('opacity-100', 'scale-100');
+                toolsMenu.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    toolsMenu.classList.add('hidden');
+                }, 200);
+            }
+        }
+
+        toolsBtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleDropdown();
+        });
+
+        toolsDropdown?.addEventListener('mouseenter', () => {
+            if (window.innerWidth >= 768) {
+                toolsMenu.classList.remove('hidden');
+                void toolsMenu.offsetWidth;
+                toolsMenu.classList.remove('opacity-0', 'scale-95');
+                toolsMenu.classList.add('opacity-100', 'scale-100');
+            }
+        });
+
+        toolsDropdown?.addEventListener('mouseleave', () => {
+            if (window.innerWidth >= 768) {
+                setTimeout(() => {
+                    if (!toolsDropdown.matches(':hover')) {
+                        toolsMenu.classList.remove('opacity-100', 'scale-100');
+                        toolsMenu.classList.add('opacity-0', 'scale-95');
+                        setTimeout(() => {
+                            if (!toolsDropdown.matches(':hover')) {
+                                toolsMenu.classList.add('hidden');
+                            }
+                        }, 200);
+                    }
+                }, 150);
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!toolsDropdown.contains(e.target)) {
+                toolsMenu.classList.remove('opacity-100', 'scale-100');
+                toolsMenu.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    toolsMenu.classList.add('hidden');
+                }, 200);
+            }
+        });
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modalBackdrop.classList.remove('opacity-0');
+            modalBackdrop.classList.add('opacity-100');
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+            document.body.style.overflow = 'hidden';
+            toolsMenu.classList.add('hidden');
+        }
+
+        function closeModal() {
+            modalBackdrop.classList.add('opacity-0');
+            modalContent.classList.add('opacity-0', 'scale-95');
+            modalContent.classList.remove('opacity-100', 'scale-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 200);
+        }
+
+        contactBtn?.addEventListener('click', openModal);
+        modalClose?.addEventListener('click', closeModal);
+        modalBackdrop?.addEventListener('click', closeModal);
+
+        copyWxBtn?.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText('lazyhelper1');
+                copyWxBtn.textContent = '已复制';
+                copyWxBtn.classList.add('bg-green-600');
+                setTimeout(() => {
+                    copyWxBtn.textContent = '点击复制微信号';
+                    copyWxBtn.classList.remove('bg-green-600');
+                }, 2000);
+            } catch (err) {
+                alert('复制失败，请手动复制：lazyhelper1');
+            }
+        });
+    </script>
+</body>
 </html>

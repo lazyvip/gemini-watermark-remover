@@ -191,6 +191,7 @@
                         <button id="maskToggleBtn" class="px-5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium">显示模版</button>
                         <button id="clearMaskBtn" class="px-5 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed" disabled>清空涂抹</button>
                         <button id="manualProcessBtn" class="px-5 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed" disabled>开始修复</button>
+                        <button id="manualDownloadBtn" class="px-5 py-2 rounded-lg bg-success hover:bg-green-600 text-white text-sm font-medium hidden">下载结果</button>
                     </div>
                     <div id="manualGrid" class="grid md:grid-cols-2 gap-4">
                         <div class="bg-white/5 border border-white/10 rounded-xl p-3">
@@ -298,6 +299,7 @@
             manualResultCanvas: document.getElementById('manualResultCanvas'),
             processBtn: document.getElementById('processBtn'),
             manualProcessBtn: document.getElementById('manualProcessBtn'),
+            manualDownloadBtn: document.getElementById('manualDownloadBtn'),
             clearMaskBtn: document.getElementById('clearMaskBtn'),
             brushSize: document.getElementById('brushSize'),
             maskToggleBtn: document.getElementById('maskToggleBtn'),
@@ -722,6 +724,7 @@
             ui.processBtn.disabled = false;
             ui.manualProcessBtn.disabled = false;
             ui.clearMaskBtn.disabled = false;
+            ui.manualDownloadBtn.classList.add('hidden');
             setStatus("图片已加载，准备处理");
         }
 
@@ -810,6 +813,7 @@
                 const maskData = ui.manualMaskCanvas.getContext('2d').getImageData(0, 0, ui.manualMaskCanvas.width, ui.manualMaskCanvas.height);
                 const result = await inpainter.inpaint(state.originalImageData, maskData);
                 drawImageData(ui.manualResultCanvas, result);
+                ui.manualDownloadBtn.classList.remove('hidden');
                 setStatus("处理完成");
             } catch (err) {
                 setStatus("处理出错：" + err.message);
@@ -817,6 +821,13 @@
                 state.isProcessing = false;
                 ui.manualProcessBtn.disabled = false;
             }
+        });
+
+        ui.manualDownloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'lazycut-manual-result.png';
+            link.href = ui.manualResultCanvas.toDataURL('image/png');
+            link.click();
         });
 
         ui.clearMaskBtn.addEventListener('click', () => {
