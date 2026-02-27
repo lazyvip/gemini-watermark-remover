@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LazyCut - NotebookLM Watermark Remover | Free Online Tool</title>
+    <meta name="description" content="LazyCut NotebookLM Watermark Remover - Designed for NotebookLM exported documents, supports image and PDF watermark removal. Pure browser-local processing, privacy protected, free and fast.">
+    <meta name="keywords" content="NotebookLM watermark remover, PDF watermark remover, Image watermark removal, LazyCut, LazySo, Free tool, Local processing">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://clean.lazyso.com/en/notebooklm/">
+    <meta property="og:title" content="LazyCut - NotebookLM Watermark Remover">
+    <meta property="og:description" content="Designed for NotebookLM exported documents, supports image and PDF watermark removal. Pure browser-local processing, privacy protected.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="LazyCut - NotebookLM Watermark Remover">
+    <meta property="twitter:description" content="Designed for NotebookLM exported documents, supports image and PDF watermark removal. Pure browser-local processing, privacy protected.">
+    <link rel="canonical" href="https://clean.lazyso.com/en/notebooklm/">
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "SoftwareApplication",
+                    "name": "LazyCut NotebookLM Watermark Remover",
+                    "applicationCategory": "ImageEditingApplication",
+                    "operatingSystem": "Web",
+                    "url": "https://clean.lazyso.com/en/notebooklm/",
+                    "description": "Designed for NotebookLM exported documents, supports image and PDF watermark removal. Pure browser-local processing, privacy protected.",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "CNY"
+                    }
+                },
+                {
+                    "@type": "HowTo",
+                    "name": "How to use LazyCut NotebookLM Watermark Remover",
+                    "step": [
+                        {
+                            "@type": "HowToStep",
+                            "name": "Upload File",
+                            "text": "Click to upload or drag and drop..."
+                        },
+                        {
+                            "@type": "HowToStep",
+                            "name": "Wait for Local Processing",
+                            "text": "Browser local WASM automatic recognition..."
+                        },
+                        {
+                            "@type": "HowToStep",
+                            "name": "Preview and Download",
+                            "text": "Confirm lossless effect and save..."
+                        }
+                    ]
+                }
+            ]
+        }
+    </script>
+    
+    <link rel="stylesheet" href="/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 引入依赖 -->
+    <script src="/notebooklm/libs/vue.global.js"></script>
+    
+    <link rel="stylesheet" href="/notebooklm/style.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        [v-cloak] { display: none; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #3B82F6; border-radius: 4px; }
+        
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #3B82F6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?15a7d418f6a8b5c7f67943624afd4bc7";
+            var s = document.getElementsByTagName("script")[0]; 
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+</head>
+<body class="theme-notebooklm bg-lazy-dark text-gray-200 antialiased selection:bg-primary selection:text-white flex flex-col min-h-screen">
+    <div id="app" v-cloak>
+        <header class="sticky top-0 z-50 bg-lazy-dark/90 backdrop-blur-md border-b border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <svg class="h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <div class="flex flex-col leading-tight">
+                        <div class="text-sm font-bold tracking-tight text-primary md:text-xl">
+                            <a href="/en/" class="hover:text-primary transition-colors" title="LazyCut Watermark Remover">LazyCut Watermark Remover</a>
+                        </div>
+                        <span class="text-xs text-gray-400">Powered by LazySo Labs</span>
+                    </div>
+                </div>
+                <nav class="flex gap-4 items-center relative">
+                    <a href="/en/" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-white text-sm font-medium">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Back to Home
+                    </a>
+                    <div class="relative" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+                        <button 
+                            @click.stop="toggleTools" 
+                            class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-sm transition-all text-white text-sm font-medium group"
+                        >
+                            More Tools <span class="transition-transform duration-200" :class="{ 'rotate-180': toolsMenuOpen }">▾</span>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div 
+                            v-show="toolsMenuOpen"
+                            class="absolute right-0 mt-2 w-64 rounded-xl bg-[#1a1a1c] border border-white/10 shadow-xl overflow-hidden z-50 transform origin-top-right transition-all duration-200"
+                            :class="{ 'opacity-100 scale-100': toolsMenuOpen, 'opacity-0 scale-95': !toolsMenuOpen }"
+                            style="display: none;"
+                            v-show.display="toolsMenuOpen ? 'block' : 'none'"
+                        >
+                            <a href="https://lazyso.com/" class="block px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors flex items-center gap-2">
+                                <span>🏠</span> Back to LazySo
+                            </a>
+                            <a href="https://wcnkxg1u4986.feishu.cn/base/UTBDb7vwiap3zmsJwuJctoVPnWx?from=from_copylink" target="_blank" class="block px-4 py-3 text-sm text-[#a78bfa] font-medium hover:bg-white/5 hover:text-[#c4b5fd] transition-colors border-t border-white/5 flex items-center gap-2">
+                                <span>🚀</span> AI Resource Library
+                            </a>
+                            <button @click="openModal" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-t border-white/5 flex items-center gap-2">
+                                <span>💬</span> Contact
+                            </button>
+                        </div>
+                    </div>
+                    <a href="/notebooklm/" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-white text-sm font-medium">🌐 中文</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 py-8 w-full">
+            <section class="text-center mb-12">
+                <h1 class="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">NotebookLM Watermark Remover</h1>
+                <p class="text-gray-400 text-lg">Pure browser-local processing, protecting your document privacy</p>
+            </section>
+
+            <!-- Tabs -->
+            <div class="flex justify-center mb-8">
+                <nav class="inline-flex p-1 bg-white/5 rounded-xl border border-white/10">
+                    <button 
+                        v-for="tab in ['image', 'pdf']" 
+                        :key="tab"
+                        @click="switchTab(tab)"
+                        :class="[
+                            'px-6 py-2 rounded-lg text-sm font-medium transition-all',
+                            currentTab === tab ? 'bg-primary text-white shadow-lg' : 'text-gray-400 hover:text-white'
+                        ]"
+                    >
+                        {{ tab === 'image' ? 'Image Remover' : 'PDF Remover' }}
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Upload Area -->
+            <div class="max-w-4xl mx-auto bg-lazy-card rounded-2xl shadow-soft p-3 border border-white/5 mb-12">
+                <div 
+                    v-if="!hasFile"
+                    @dragover.prevent 
+                    @drop.prevent="handleDrop" 
+                    @click="triggerUpload"
+                    class="group relative flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-white/10 rounded-xl bg-white/5 hover:bg-white/10 hover:border-primary/50 transition-all cursor-pointer"
+                >
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                        </div>
+                        <p class="mb-2 text-lg font-medium text-gray-200">Click to upload or Drag {{ tabName }} here</p>
+                        <p class="text-sm text-gray-500">
+                            {{ currentTab === 'image' ? 'Supports PNG, JPEG, WebP' : 'Supports PDF files' }}
+                        </p>
+                    </div>
+                    <input type="file" ref="fileInput" @change="handleFileChange" :accept="acceptTypes" :multiple="currentTab !== 'pdf'" hidden>
+                </div>
+
+                <!-- PDF Workspace -->
+                <div v-else-if="currentTab === 'pdf'" class="p-4">
+                    <div class="flex flex-wrap gap-3 mb-6 justify-center">
+                        <button class="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-xl font-medium transition-all disabled:opacity-50" @click="processCurrentPage" :disabled="isProcessing">Remove Current Page</button>
+                        <button class="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-xl font-medium transition-all disabled:opacity-50" @click="processAllPages" :disabled="isProcessing">Remove All Pages ({{ totalPages }})</button>
+                        <button class="px-6 py-2.5 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl font-medium transition-all" @click="toggleViewMode">
+                            {{ showProcessed ? 'Show Original' : 'Show Processed' }}
+                        </button>
+                        <button class="px-6 py-2.5 bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 rounded-xl font-medium transition-all" @click="clearAll">Clear All</button>
+                    </div>
+
+                    <div class="flex items-center justify-center gap-4 mb-6">
+                        <button class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 disabled:opacity-30" @click="prevPage" :disabled="currentPage <= 1 || isProcessing">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <span class="text-lg font-bold text-white">{{ currentPage }} / {{ totalPages }}</span>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 disabled:opacity-30" @click="nextPage" :disabled="currentPage >= totalPages || isProcessing">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+
+                    <div class="relative bg-black/40 rounded-xl overflow-hidden border border-white/10 flex justify-center p-4">
+                        <canvas ref="pdfCanvas" class="max-w-full shadow-2xl"></canvas>
+                        <div v-if="isProcessing" class="absolute inset-0 bg-lazy-dark/80 backdrop-blur-sm flex flex-col items-center justify-center">
+                            <div class="loading-spinner mb-4"></div>
+                            <p class="text-primary font-bold">Processing... {{ processProgress }}%</p>
+                        </div>
+                    </div>
+
+                    <div v-if="processedPdfUrl" class="mt-8 flex justify-center">
+                        <a :href="processedPdfUrl" :download="downloadName" class="px-8 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold shadow-lg transition-all flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Download Processed PDF
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Image/Video List -->
+                <div v-else class="p-4">
+                    <div class="flex justify-end gap-3 mb-6">
+                        <button class="px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-gray-400 hover:text-white rounded-lg transition-all" @click="clearAll">Clear All</button>
+                        <button class="px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-bold transition-all disabled:opacity-50" @click="processAll" :disabled="isProcessing">Start Processing</button>
+                    </div>
+
+                    <div class="grid gap-6">
+                        <div v-for="(file, index) in files" :key="index" class="bg-white/5 border border-white/10 rounded-xl p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-sm font-medium text-gray-300 truncate max-w-xs">{{ file.name }}</span>
+                                <span :class="['px-3 py-1 rounded-full text-xs font-bold', {
+                                    'bg-yellow-500/20 text-yellow-500': file.status === 'pending',
+                                    'bg-blue-500/20 text-blue-500': file.status === 'processing',
+                                    'bg-green-500/20 text-green-500': file.status === 'completed',
+                                    'bg-red-500/20 text-red-500': file.status === 'error'
+                                }]">
+                                    {{ statusText(file.status) }} 
+                                    <span v-if="file.progress > 0 && file.status === 'processing'">({{ file.progress }}%)</span>
+                                </span>
+                            </div>
+                            
+                            <div v-if="file.previewUrl || file.resultUrl" class="grid md:grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Original</p>
+                                    <div class="bg-black/20 rounded-lg overflow-hidden flex items-center justify-center min-h-[200px] border border-white/5">
+                                        <img v-if="file.type === 'image'" :src="file.previewUrl" class="max-h-64 object-contain">
+                                    </div>
+                                </div>
+                                <div class="space-y-2" v-if="file.resultUrl">
+                                    <p class="text-xs text-primary font-bold uppercase tracking-wider">Result</p>
+                                    <div class="bg-black/20 rounded-lg overflow-hidden flex items-center justify-center min-h-[200px] border border-primary/20 relative">
+                                        <img v-if="file.type === 'image'" :src="file.resultUrl" class="max-h-64 object-contain">
+                                    </div>
+                                    <div class="mt-4 flex justify-center">
+                                        <a :href="file.resultUrl" :download="file.downloadName || ('cleaned_' + file.name)" class="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-xl font-medium shadow-lg transition-all flex items-center gap-2">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                            Download Result
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-8 py-12 border-t border-white/5">
+                <div class="bg-lazy-card p-6 rounded-xl border border-white/5 text-center">
+                    <div class="w-12 h-12 bg-primary/20 text-primary rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h4 class="text-lg font-bold text-white mb-2">Privacy First</h4>
+                    <p class="text-gray-400 text-sm">Runs entirely in browser. Files never leave your device.</p>
+                </div>
+                <div class="bg-lazy-card p-6 rounded-xl border border-white/5 text-center">
+                    <div class="w-12 h-12 bg-green-500/20 text-green-400 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h4 class="text-lg font-bold text-white mb-2">High Quality</h4>
+                    <p class="text-gray-400 text-sm">Smart restoration algorithm preserves original details.</p>
+                </div>
+                <div class="bg-lazy-card p-6 rounded-xl border border-white/5 text-center">
+                    <div class="w-12 h-12 bg-purple-500/20 text-purple-400 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h4 class="text-lg font-bold text-white mb-2">Fast Processing</h4>
+                    <p class="text-gray-400 text-sm">Multi-threaded WASM acceleration for speed.</p>
+                </div>
+            </section>
+        </main>
+
+        <footer class="bg-lazy-card text-gray-500 py-8 border-t border-white/10 text-center">
+            <p class="text-sm mb-2">本工具由 <a href="https://lazyso.com" class="text-gray-300 hover:text-white transition-colors">LazySo 懒人搜索</a> 提供技术支持。探索更多自动化变现玩法 -> <a href="https://lazyso.com" class="text-gray-300 hover:text-white transition-colors">进入主站</a></p>
+            <p class="text-sm">&copy; 2026 LazySo & MarkCut. All rights reserved.</p>
+        </footer>
+
+        <!-- Contact Modal -->
+        <div v-if="modalOpen" class="fixed inset-0 z-[100]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="closeModal"></div>
+            
+            <!-- Modal Content -->
+            <div class="relative min-h-screen flex items-center justify-center p-4">
+                <div class="bg-[#1a1a1c] border border-white/10 rounded-2xl max-w-sm w-full p-6 shadow-2xl transform transition-all">
+                    <!-- Close Button -->
+                    <button @click="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                    
+                    <h3 class="text-xl font-bold text-white mb-6 text-center">联系作者，获取更多优质工具分享！</h3>
+                    
+                    <div class="bg-white p-1 rounded-xl mb-6 mx-auto w-fit">
+                        <img src="/vx_qrcode.jpg" alt="WeChat QR Code" class="w-64 h-64 object-contain">
+                    </div>
+                    
+                    <div class="text-center space-y-4">
+                        <p class="text-gray-400 text-sm">微信号: <span class="text-white font-mono select-all">lazyhelper1</span></p>
+                        <button @click="copyWx" class="w-full py-2.5 rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2" :class="copySuccess ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-[#7c3aed] hover:bg-[#6d28d9] text-white'">
+                            <svg v-if="!copySuccess" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                            <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            {{ copySuccess ? '复制成功' : '点击复制微信号' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/notebooklm/app.js"></script>
+</body>
+</html>

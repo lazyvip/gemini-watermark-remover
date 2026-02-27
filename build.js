@@ -88,6 +88,13 @@ const commonConfig = {
   logLevel: 'info',
 };
 
+const buildTailwind = () => {
+  const minifyFlag = isProd ? ' --minify' : '';
+  execSync(`npx tailwindcss -i src/styles/tailwind.css -o public/tailwind.css${minifyFlag}`, {
+    stdio: 'inherit'
+  });
+};
+
 // Build website - app.js
 const websiteCtx = await esbuild.context({
   ...commonConfig,
@@ -118,6 +125,7 @@ try {
   console.warn('⚠️ Clean step skipped:', e?.message || e);
 }
 mkdirSync('dist/userscript', { recursive: true });
+buildTailwind();
   
 if (isProd) {
   await Promise.all([websiteCtx.rebuild(), userscriptCtx.rebuild()]);

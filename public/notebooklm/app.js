@@ -2,15 +2,12 @@ import { removeWatermarkFromCanvas } from './core.js';
 
 const { createApp, ref, computed, nextTick, watch, shallowRef } = Vue;
 
-// 全局变量 FFmpeg
-let ffmpeg = null;
-
 createApp({
     setup() {
         const files = ref([]);
         const isProcessing = ref(false);
         const fileInput = ref(null);
-        const currentTab = ref('image'); // 'image', 'pdf', 'video'
+        const currentTab = ref('image');
 
         // PDF 专属状态
         // 使用 shallowRef 避免 Vue Proxy 代理 PDF.js 的复杂对象，
@@ -30,8 +27,7 @@ createApp({
         const tabName = computed(() => {
             const map = {
                 'image': '图片',
-                'pdf': 'PDF',
-                'video': '视频'
+                'pdf': 'PDF'
             };
             return map[currentTab.value];
         });
@@ -39,8 +35,7 @@ createApp({
         const acceptTypes = computed(() => {
             const map = {
                 'image': 'image/png,image/jpeg,image/webp',
-                'pdf': '.pdf',
-                'video': 'video/mp4'
+                'pdf': '.pdf'
             };
             return map[currentTab.value];
         });
@@ -87,7 +82,6 @@ createApp({
             const validFiles = droppedFiles.filter(f => {
                 if (currentTab.value === 'image') return f.type.startsWith('image/');
                 if (currentTab.value === 'pdf') return f.type === 'application/pdf';
-                if (currentTab.value === 'video') return f.type.startsWith('video/');
                 return false;
             });
             if (validFiles.length < droppedFiles.length) {
@@ -115,7 +109,7 @@ createApp({
                         downloadName: null
                     };
 
-                    if (fileObj.type === 'image' || fileObj.type === 'video') {
+                    if (fileObj.type === 'image') {
                         fileObj.previewUrl = URL.createObjectURL(file);
                     }
                     files.value.push(fileObj);
@@ -369,8 +363,6 @@ createApp({
                 try {
                     if (file.type === 'image') {
                         await processImage(file);
-                    } else if (file.type === 'video') {
-                        await processVideo(file);
                     }
                     file.status = 'completed';
                 } catch (e) {
@@ -403,77 +395,6 @@ createApp({
                 img.onerror = reject;
                 img.src = fileObj.previewUrl;
             });
-        };
-
-        const processVideo = async (fileObj) => {
-            if (typeof FFmpeg === 'undefined') {
-                throw new Error("FFmpeg library not loaded");
-            }
-
-            if (!ffmpeg) {
-                fileObj.progress = 1; 
-                const FFmpegClass = window.FFmpeg.FFmpeg || window.FFmpeg;
-                ffmpeg = new FFmpegClass(); 
-                
-                ffmpeg.on('log', ({ message }) => console.log(message));
-                
-                try {
-                    await ffmpeg.load({
-                        coreURL: '/notebooklm/libs/ffmpeg-core.js',
-                        wasmURL: '/notebooklm/libs/ffmpeg-core.wasm'
-                    });
-                } catch (e) {
-                    console.error("Failed to load local FFmpeg core, trying CDN fallback", e);
-                    await ffmpeg.load(); 
-                }
-            }
-
-            const { fetchFile } = FFmpegUtil;
-            const inputName = 'input.mp4';
-            const outputName = 'output.mp4';
-
-            await ffmpeg.writeFile(inputName, await fetchFile(fileObj.file));
-            await ffmpeg.exec(['-i', inputName, 'frame_%04d.png']);
-            
-            const files = await ffmpeg.listDir('.');
-            const frameFiles = files.filter(f => f.name.startsWith('frame_') && f.name.endsWith('.png'));
-            
-            if (frameFiles.length === 0) throw new Error("No frames extracted");
-
-            for (let i = 0; i < frameFiles.length; i++) {
-                const fName = frameFiles[i].name;
-                const data = await ffmpeg.readFile(fName);
-                
-                const blob = new Blob([data.buffer], { type: 'image/png' });
-                const imgBitmap = await createImageBitmap(blob);
-                
-                const canvas = document.createElement('canvas');
-                canvas.width = imgBitmap.width;
-                canvas.height = imgBitmap.height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(imgBitmap, 0, 0);
-                
-                removeWatermarkFromCanvas(canvas);
-                
-                const newBlob = await new Promise(r => canvas.toBlob(r, 'image/png'));
-                const newBuffer = await newBlob.arrayBuffer();
-                await ffmpeg.writeFile(fName, new Uint8Array(newBuffer));
-                
-                fileObj.progress = Math.round(((i + 1) / frameFiles.length) * 100);
-            }
-            
-            await ffmpeg.exec(['-framerate', '30', '-pattern_type', 'glob', '-i', '*.png', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', outputName]);
-            
-            const data = await ffmpeg.readFile(outputName);
-            const videoBlob = new Blob([data.buffer], { type: 'video/mp4' });
-            fileObj.resultUrl = URL.createObjectURL(videoBlob);
-            fileObj.downloadName = "processed_" + fileObj.name;
-            
-            await ffmpeg.deleteFile(inputName);
-            await ffmpeg.deleteFile(outputName);
-            for (const f of frameFiles) {
-                await ffmpeg.deleteFile(f.name);
-            }
         };
 
         const loadScript = (src) => {

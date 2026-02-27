@@ -17,7 +17,9 @@
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:title" content="LazyCut - NotebookLM 去水印工具">
     <meta property="twitter:description" content="专为 NotebookLM 导出的文档设计，支持图片和 PDF 去水印。完全浏览器本地处理，保护隐私。">
-    <link rel="canonical" href="https://clean.lazyso.com/notebooklm/">
+    <link rel="alternate" hreflang="zh-Hans" href="https://clean.lazyso.com/notebooklm/" />
+    <link rel="alternate" hreflang="en" href="https://clean.lazyso.com/en/notebooklm/" />
+    <link rel="alternate" hreflang="x-default" href="https://clean.lazyso.com/notebooklm/" />
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -60,29 +62,11 @@
         }
     </script>
     
-    <!-- 引入 Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3B82F6',
-                        'primary-hover': '#2563EB',
-                        dark: '#0f0f11',
-                        'lazy-dark': '#0f0f11',
-                        'lazy-card': '#27272a',
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="/tailwind.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- 引入依赖 -->
     <script src="/notebooklm/libs/vue.global.js"></script>
-    <script src="/notebooklm/libs/ffmpeg.js"></script>
-    <script src="/notebooklm/libs/ffmpeg-util.js"></script>
     
     <link rel="stylesheet" href="/notebooklm/style.css">
     <style>
@@ -115,7 +99,7 @@
         })();
     </script>
 </head>
-<body class="bg-lazy-dark text-gray-200 antialiased selection:bg-primary selection:text-white flex flex-col min-h-screen">
+<body class="theme-notebooklm bg-lazy-dark text-gray-200 antialiased selection:bg-primary selection:text-white flex flex-col min-h-screen">
     <div id="app" v-cloak>
         <header class="sticky top-0 z-50 bg-lazy-dark/90 backdrop-blur-md border-b border-white/10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -163,6 +147,7 @@
                             </button>
                         </div>
                     </div>
+                    <a href="/en/notebooklm/" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-white text-sm font-medium">🌐 English</a>
                 </nav>
             </div>
         </header>
@@ -279,14 +264,12 @@
                                     <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">原始文件</p>
                                     <div class="bg-black/20 rounded-lg overflow-hidden flex items-center justify-center min-h-[200px] border border-white/5">
                                         <img v-if="file.type === 'image'" :src="file.previewUrl" class="max-h-64 object-contain">
-                                        <video v-if="file.type === 'video'" :src="file.previewUrl" controls class="max-h-64"></video>
                                     </div>
                                 </div>
                                 <div class="space-y-2" v-if="file.resultUrl">
                                     <p class="text-xs text-primary font-bold uppercase tracking-wider">处理结果</p>
                                     <div class="bg-black/20 rounded-lg overflow-hidden flex items-center justify-center min-h-[200px] border border-primary/20 relative">
                                         <img v-if="file.type === 'image'" :src="file.resultUrl" class="max-h-64 object-contain">
-                                        <video v-else-if="file.type === 'video'" :src="file.resultUrl" controls class="max-h-64"></video>
                                     </div>
                                     <div class="mt-4 flex justify-center">
                                         <a :href="file.resultUrl" :download="file.downloadName || ('cleaned_' + file.name)" class="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-xl font-medium shadow-lg transition-all flex items-center gap-2">

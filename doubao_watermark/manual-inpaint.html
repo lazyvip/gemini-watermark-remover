@@ -13,7 +13,9 @@
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:title" content="LazyCut - 手动涂抹去水印">
     <meta property="twitter:description" content="画笔标注 Mask，纯浏览器本地修复，免费、极速、安全。">
-    <link rel="canonical" href="https://clean.lazyso.com/manual/">
+    <link rel="alternate" hreflang="zh-Hans" href="https://clean.lazyso.com/manual/" />
+    <link rel="alternate" hreflang="en" href="https://clean.lazyso.com/en/manual/" />
+    <link rel="alternate" hreflang="x-default" href="https://clean.lazyso.com/manual/" />
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -56,30 +58,7 @@
         }
     </script>
     <link rel="icon" href="data:image/svg+xml,%3Csvg class='h-10 w-10 text-indigo-500' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F59E0B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20l9-9-5-5-9 9v5h5z'/%3E%3C/svg%3E">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#F59E0B',
-                        'primary-hover': '#D97706',
-                        dark: '#0f0f11',
-                        'lazy-dark': '#0f0f11',
-                        'lazy-card': '#27272a',
-                        success: '#10B981',
-                        warn: '#F59E0B',
-                        err: '#EF4444',
-                        info: '#3B82F6'
-                    },
-                    boxShadow: {
-                        'soft': '0 4px 20px -2px rgba(245, 158, 11, 0.18)',
-                        'card': '0 0 20px rgba(0,0,0,0.2)'
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="/tailwind.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; }
@@ -96,7 +75,7 @@
     </style>
     <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
 </head>
-<body class="bg-lazy-dark text-gray-200 antialiased selection:bg-primary selection:text-white flex flex-col min-h-screen manual-only">
+<body class="theme-manual bg-lazy-dark text-gray-200 antialiased selection:bg-primary selection:text-white flex flex-col min-h-screen manual-only">
     <header class="sticky top-0 z-50 bg-lazy-dark/90 backdrop-blur-md border-b border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -131,6 +110,7 @@
                         </button>
                     </div>
                 </div>
+                <a href="/en/manual/" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-white text-sm font-medium">🌐 English</a>
             </nav>
         </div>
     </header>
