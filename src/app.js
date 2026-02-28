@@ -56,6 +56,7 @@ async function init() {
  */
 function setupLanguageSwitch() {
     const btn = document.getElementById('langSwitch');
+    if (!btn) return;
     btn.textContent = i18n.locale === 'zh-CN' ? 'EN' : '中文';
     btn.addEventListener('click', async () => {
         const newLocale = i18n.locale === 'zh-CN' ? 'en-US' : 'zh-CN';
