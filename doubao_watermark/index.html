@@ -149,7 +149,7 @@
         body.auto-only #manualPanel { display: none; }
         body.auto-only #autoPanel { display: block; }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+    <script src="libs/ort.min.js"></script>
 </head>
 <body class="theme-doubao bg-lazy-dark text-gray-200 antialiased selection:bg-primary selection:text-white flex flex-col min-h-screen auto-only">
     <header class="sticky top-0 z-50 bg-lazy-dark/90 backdrop-blur-md border-b border-white/10">
@@ -328,7 +328,7 @@
             });
         }
 
-        ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/";
+        ort.env.wasm.wasmPaths = "libs/";
 
         const MODELS = {
             yolo: '/doubao/yolo.onnx',

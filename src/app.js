@@ -102,6 +102,7 @@ function reset() {
 
 function handleFileSelect(e) {
     handleFiles(Array.from(e.target.files));
+    e.target.value = '';
 }
 
 function handleFiles(files) {
