@@ -153,8 +153,8 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
-    <script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
+    <script src="/ffmpeg/ffmpeg.js"></script>
+    <script src="/ffmpeg/util.js"></script>
     <script>
         const ui = {
             input: document.getElementById('videoInput'),
@@ -438,23 +438,39 @@
         }
 
         async function ensureFfmpeg() {
-            if (state.ffmpeg) return state.ffmpeg;
-            if (!window.FFmpeg || !window.FFmpeg.FFmpeg || !window.FFmpegUtil) throw new Error('FFmpeg.wasm 加载失败');
-            const { FFmpeg } = window.FFmpeg;
-            const { toBlobURL } = window.FFmpegUtil;
-            const ffmpeg = new FFmpeg();
-            ffmpeg.on('progress', ({ progress }) => {
-                const pct = Math.min(100, Math.max(1, Math.round(progress * 100)));
-                setProgress(pct, `处理中 ${pct}%`);
-                console.log(`Processing: ${progress * 100}%`);
-            });
-            const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
-            await ffmpeg.load({
-                coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-                wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
-            });
-            state.ffmpeg = ffmpeg;
-            return ffmpeg;
+            try {
+                const ffmpegGlobal = window.FFmpegWASM || window.FFmpeg;
+                if (!ffmpegGlobal) throw new Error('本地 ffmpeg.js 加载失败，找不到全局变量！');
+                const { FFmpeg } = ffmpegGlobal;
+                const { fetchFile } = window.FFmpegUtil || window;
+                if (!window.ffmpegInstance) {
+                    window.ffmpegInstance = new FFmpeg();
+                    window.ffmpegInstance.on('log', ({ message }) => console.log(message));
+                    window.ffmpegInstance.on('progress', ({ progress }) => {
+                        console.log(`Processing: ${(progress * 100).toFixed(2)}%`);
+                        const pct = Math.min(100, Math.max(1, Math.round(progress * 100)));
+                        setProgress(pct, `处理中 ${pct}%`);
+                    });
+                }
+                const coreAbsoluteURL = `${window.location.origin}/ffmpeg/ffmpeg-core.js`;
+                const wasmAbsoluteURL = `${window.location.origin}/ffmpeg/ffmpeg-core.wasm`;
+                console.log('加载绝对路径:', coreAbsoluteURL, wasmAbsoluteURL);
+                const loadPromise = window.ffmpegInstance.load({
+                    coreURL: coreAbsoluteURL,
+                    wasmURL: wasmAbsoluteURL
+                });
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('FFmpeg 加载超时（30秒）！请检查网络面板 wasm 文件是否被拦截，或 MIME 类型是否为 application/wasm')), 30000);
+                });
+                console.log('⏳ 开始执行加载并等待 Worker 响应...');
+                await Promise.race([loadPromise, timeoutPromise]);
+                console.log('✅ 本地引擎加载成功！');
+                return window.ffmpegInstance;
+            } catch (error) {
+                console.error('🚨 致命错误:', error);
+                alert('引擎加载失败，请检查网络或刷新重试。');
+                throw error;
+            }
         }
 
         ui.processBtn.addEventListener('click', async () => {
@@ -466,19 +482,26 @@
                 setProgress(2, '写入文件...');
                 const inputName = 'input.mp4';
                 const outputName = 'output.mp4';
-                const { fetchFile } = window.FFmpegUtil;
-                await ffmpeg.writeFile(inputName, await fetchFile(state.file));
+                const file = state.file;
+                const { fetchFile } = window.FFmpegUtil || window;
+                await ffmpeg.writeFile(inputName, await fetchFile(file));
+                console.log('正在执行 delogo 处理...');
                 const box = getVideoBox();
+                const x = box.x;
+                const y = box.y;
+                const w = box.w;
+                const h = box.h;
                 setProgress(3, '开始处理...');
                 await ffmpeg.exec([
                     '-i', inputName,
-                    '-vf', `delogo=x=${box.x}:y=${box.y}:w=${box.w}:h=${box.h}:show=0`,
+                    '-vf', `delogo=x=${x}:y=${y}:w=${w}:h=${h}:show=0`,
                     '-c:v', 'libx264',
                     '-preset', 'ultrafast',
                     '-crf', '23',
                     '-c:a', 'copy',
                     outputName
                 ]);
+                console.log('处理完成，正在读取文件...');
                 setProgress(98, '导出结果...');
                 const data = await ffmpeg.readFile(outputName);
                 const blob = new Blob([data.buffer], { type: 'video/mp4' });
@@ -490,8 +513,8 @@
                 await ffmpeg.deleteFile(inputName);
                 await ffmpeg.deleteFile(outputName);
             } catch (err) {
-                console.error('FFmpeg load error:', err);
-                alert('FFmpeg.wasm 加载失败，请检查网络或控制台报错。');
+                console.error('FFmpeg 执行致命错误:', err);
+                alert('FFmpeg.wasm 加载或处理失败，请查看控制台报错详情。');
                 setProgress(0, `处理失败：${err.message || err}`);
             } finally {
                 ui.processBtn.disabled = false;
