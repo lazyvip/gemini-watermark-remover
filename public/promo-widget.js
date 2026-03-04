@@ -27,7 +27,7 @@
       onMounted(() => {
         timer = setTimeout(() => {
           isVisible.value = true;
-        }, 6000);
+        }, 9000);
       });
       onBeforeUnmount(() => {
         if (timer) {
