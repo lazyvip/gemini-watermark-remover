@@ -23,16 +23,26 @@
   createApp({
     setup() {
       const isVisible = ref(false);
-      let timer = null;
-      onMounted(() => {
-        timer = setTimeout(() => {
+      let hasShown = false;
+      const triggerEventName = 'lazyso:promo-ready';
+      const showWidget = () => {
+        if (hasShown) return;
+        hasShown = true;
+        requestAnimationFrame(() => {
           isVisible.value = true;
-        }, 9000);
+        });
+      };
+      const handleTrigger = () => {
+        showWidget();
+      };
+      onMounted(() => {
+        window.addEventListener(triggerEventName, handleTrigger);
+        window.showPromoWidget = showWidget;
       });
       onBeforeUnmount(() => {
-        if (timer) {
-          clearTimeout(timer);
-          timer = null;
+        window.removeEventListener(triggerEventName, handleTrigger);
+        if (window.showPromoWidget === showWidget) {
+          delete window.showPromoWidget;
         }
       });
       return { isVisible };

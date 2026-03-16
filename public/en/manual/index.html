@@ -261,6 +261,15 @@
             isProcessing: false,
             mode: 'manual'
         };
+        let hasTriggeredPromoWidget = false;
+
+        function triggerPromoWidget(source) {
+            if (hasTriggeredPromoWidget) return;
+            hasTriggeredPromoWidget = true;
+            window.dispatchEvent(new CustomEvent('lazyso:promo-ready', {
+                detail: { source }
+            }));
+        }
 
         const ui = {
             input: document.getElementById('imageInput'),
@@ -776,6 +785,7 @@
                 const result = await inpainter.inpaint(state.originalImageData, mask);
                 drawImageData(ui.autoResultCanvas, result);
                 setStatus("处理完成");
+                triggerPromoWidget('manual-en-auto-success');
             } catch (err) {
                 setStatus("处理出错：" + err.message);
             } finally {
@@ -797,6 +807,7 @@
                 drawImageData(ui.manualResultCanvas, result);
                 ui.manualDownloadBtn.classList.remove('hidden');
                 setStatus("处理完成");
+                triggerPromoWidget('manual-en-brush-success');
             } catch (err) {
                 setStatus("处理出错：" + err.message);
             } finally {
@@ -810,6 +821,7 @@
             link.download = 'lazycut-manual-result.png';
             link.href = ui.manualResultCanvas.toDataURL('image/png');
             link.click();
+            triggerPromoWidget('manual-en-download');
         });
 
         ui.clearMaskBtn.addEventListener('click', () => {
@@ -1018,5 +1030,7 @@
             }
         });
     </script>
+    <script src="/notebooklm/libs/vue.global.js"></script>
+    <script src="/promo-widget.js"></script>
 </body>
 </html>

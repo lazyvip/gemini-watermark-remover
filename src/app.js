@@ -9,6 +9,15 @@ let engine = null;
 let imageQueue = [];
 let processedCount = 0;
 let zoom = null;
+let hasTriggeredPromoWidget = false;
+
+function triggerPromoWidget() {
+    if (hasTriggeredPromoWidget) return;
+    hasTriggeredPromoWidget = true;
+    window.dispatchEvent(new CustomEvent('lazyso:promo-ready', {
+        detail: { source: 'gemini' }
+    }));
+}
 
 // dom elements references
 const uploadArea = document.getElementById('uploadArea');
@@ -184,6 +193,7 @@ async function processSingle(item) {
         zoom.attach('[data-zoomable]');
 
         processedSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        triggerPromoWidget();
     } catch (error) {
         console.error(error);
     }
@@ -250,6 +260,7 @@ async function processQueue() {
 
                 processedCount++;
                 updateProgress();
+                triggerPromoWidget();
 
                 checkOriginal(item.originalImg).then(({ is_google, is_original }) => {
                     if (!is_google || !is_original) {

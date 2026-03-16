@@ -2,6 +2,16 @@ import { removeWatermarkFromCanvas } from './core.js';
 
 const { createApp, ref, computed, nextTick, watch, shallowRef } = Vue;
 
+let hasTriggeredPromoWidget = false;
+
+const triggerPromoWidget = (source) => {
+    if (hasTriggeredPromoWidget) return;
+    hasTriggeredPromoWidget = true;
+    window.dispatchEvent(new CustomEvent('lazyso:promo-ready', {
+        detail: { source }
+    }));
+};
+
 createApp({
     setup() {
         const files = ref([]);
@@ -266,6 +276,7 @@ createApp({
                 
                 showProcessed.value = true;
                 await renderCurrentPage();
+                triggerPromoWidget('notebooklm-pdf-page');
                 
             } catch (e) {
                 console.error(e);
@@ -341,6 +352,7 @@ createApp({
                 
                 showProcessed.value = true;
                 await renderCurrentPage();
+                triggerPromoWidget('notebooklm-pdf-all');
 
             } catch (e) {
                 console.error("Process All Error:", e);
@@ -365,6 +377,7 @@ createApp({
                         await processImage(file);
                     }
                     file.status = 'completed';
+                    triggerPromoWidget('notebooklm-image');
                 } catch (e) {
                     console.error(e);
                     file.status = 'error';

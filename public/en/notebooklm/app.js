@@ -4,6 +4,15 @@ const { createApp, ref, computed, nextTick, watch, shallowRef } = Vue;
 
 // 全局变量 FFmpeg
 let ffmpeg = null;
+let hasTriggeredPromoWidget = false;
+
+const triggerPromoWidget = (source) => {
+    if (hasTriggeredPromoWidget) return;
+    hasTriggeredPromoWidget = true;
+    window.dispatchEvent(new CustomEvent('lazyso:promo-ready', {
+        detail: { source }
+    }));
+};
 
 createApp({
     setup() {
@@ -272,6 +281,7 @@ createApp({
                 
                 showProcessed.value = true;
                 await renderCurrentPage();
+                triggerPromoWidget('notebooklm-pdf-page-en');
                 
             } catch (e) {
                 console.error(e);
@@ -347,6 +357,7 @@ createApp({
                 
                 showProcessed.value = true;
                 await renderCurrentPage();
+                triggerPromoWidget('notebooklm-pdf-all-en');
 
             } catch (e) {
                 console.error("Process All Error:", e);
@@ -373,6 +384,7 @@ createApp({
                         await processVideo(file);
                     }
                     file.status = 'completed';
+                    triggerPromoWidget('notebooklm-media-en');
                 } catch (e) {
                     console.error(e);
                     file.status = 'error';
