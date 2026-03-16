@@ -152,7 +152,7 @@
         </div>
     </div>
 
-    <script src="/ffmpeg/814.ffmpeg.js"></script>
+    <script src="/ffmpeg/ffmpeg.js"></script>
     <script src="/ffmpeg/util.js"></script>
     <script src="/promo-widget.js"></script>
     <script>
@@ -510,9 +510,6 @@
                 ui.downloadBtn.download = `seedance_clean_${state.file.name}`;
                 ui.downloadBtn.classList.remove('hidden');
                 setProgress(100, '完成');
-                window.dispatchEvent(new CustomEvent('lazyso:promo-ready', {
-                    detail: { source: 'seedance-video' }
-                }));
                 await ffmpeg.deleteFile(inputName);
                 await ffmpeg.deleteFile(outputName);
             } catch (err) {

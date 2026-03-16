@@ -345,15 +345,6 @@
             isProcessing: false,
             mode: 'auto'
         };
-        let hasTriggeredPromoWidget = false;
-
-        function triggerPromoWidget(source) {
-            if (hasTriggeredPromoWidget) return;
-            hasTriggeredPromoWidget = true;
-            window.dispatchEvent(new CustomEvent('lazyso:promo-ready', {
-                detail: { source }
-            }));
-        }
 
         const ui = {
             input: document.getElementById('imageInput'),
@@ -609,7 +600,6 @@
                     a.href = item.processedUrl;
                     a.download = `cleaned_${item.name.replace(/\.[^.]+$/, '')}.png`;
                     a.click();
-                    triggerPromoWidget('doubao-batch-item-download');
                 };
                 row.addEventListener('click', () => setSelectedItem(item.id));
                 row.appendChild(left);
@@ -662,7 +652,6 @@
                     if (item.id === selectedBatchId) {
                         await renderSelectedPreview();
                     }
-                    triggerPromoWidget('doubao-batch-success');
                 }
                 setStatus('处理完成');
                 if (processedCount > 0) ui.downloadAllBtn.disabled = false;
@@ -691,7 +680,6 @@
             a.href = URL.createObjectURL(blob);
             a.download = `cleaned_${Date.now()}.zip`;
             a.click();
-            triggerPromoWidget('doubao-batch-download-all');
         }
 
         function createMaskFromDetections(detections, width, height) {
@@ -1109,7 +1097,6 @@
                 setCompareReady(true);
                 ui.downloadBtn.disabled = false;
                 setStatus("处理完成");
-                triggerPromoWidget('doubao-auto-success');
             } catch (err) {
                 setStatus("处理出错：" + err.message);
                 ui.downloadBtn.disabled = true;
@@ -1127,7 +1114,6 @@
             link.download = 'cleaned.png';
             link.href = ui.autoOriginalCanvas.toDataURL('image/png');
             link.click();
-            triggerPromoWidget('doubao-auto-download');
         });
 
         (function initCompareDrag() {
@@ -1173,7 +1159,6 @@
                 const result = await inpainter.inpaint(state.originalImageData, maskData);
                 drawImageData(ui.manualResultCanvas, result);
                 setStatus("处理完成");
-                triggerPromoWidget('doubao-manual-success');
             } catch (err) {
                 setStatus("处理出错：" + err.message);
             } finally {
