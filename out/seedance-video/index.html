@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seedance / 豆包视频去水印工具 (纯本地) - LazyCut</title>
+    <meta name="description" content="Seedance/豆包视频去水印工具，100% 浏览器本地处理，无需上传，隐私安全。支持框选左上角固定水印并使用 FFmpeg.wasm 去除。">
+    <link rel="canonical" href="https://clean.lazyso.com/seedance-video/">
+    <link rel="alternate" hreflang="zh-Hans" href="https://clean.lazyso.com/seedance-video/" />
+    <link rel="alternate" hreflang="en" href="https://clean.lazyso.com/en/seedance-video/" />
+    <link rel="alternate" hreflang="x-default" href="https://clean.lazyso.com/seedance-video/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .handle { width: 12px; height: 12px; background: #7c3aed; border-radius: 9999px; position: absolute; }
+        .handle-nw { top: -6px; left: -6px; cursor: nwse-resize; }
+        .handle-ne { top: -6px; right: -6px; cursor: nesw-resize; }
+        .handle-sw { bottom: -6px; left: -6px; cursor: nesw-resize; }
+        .handle-se { bottom: -6px; right: -6px; cursor: nwse-resize; }
+    </style>
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?15a7d418f6a8b5c7f67943624afd4bc7";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+</head>
+<body class="theme-gemini bg-[#0f0f11] text-gray-200 min-h-screen flex flex-col">
+    <header class="border-b border-white/10 bg-[#0f0f11]/90 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <svg class="h-8 w-8 text-[#7c3aed]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m12 3-1.9 5.8-5.8 1.9 5.8 1.9 1.9 5.8 1.9-5.8 5.8-1.9-5.8-1.9Z"></path>
+                </svg>
+                <div class="flex flex-col leading-tight">
+                    <div class="text-xl font-bold tracking-tight text-white">
+                        <a href="/" class="hover:text-white" title="LazySo 懒人去水印">LazySo 懒人去水印</a>
+                    </div>
+                    <span class="text-xs text-gray-400">Powered by LazySo Labs</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="/en/seedance-video/" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-white text-sm font-medium">🌐 English</a>
+                <div class="relative" id="tools-dropdown">
+                    <button id="tools-btn" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-sm transition-all text-white text-sm font-medium group">
+                        更多工具 <span class="group-hover:rotate-180 transition-transform duration-200">▾</span>
+                    </button>
+                    <div id="tools-menu" class="hidden absolute right-0 mt-2 w-64 rounded-xl bg-[#1a1a1c] border border-white/10 shadow-xl overflow-hidden z-50 transform origin-top-right transition-all duration-200 opacity-0 scale-95">
+                        <a href="https://lazyso.com/" class="block px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors flex items-center gap-2">
+                            <span>🏠</span> 回到 LazySo 主站
+                        </a>
+                        <a href="/seedance-video/" class="block px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-t border-white/5 flex items-center gap-2">
+                            <span>🎬</span> Seedance / 豆包视频去水印
+                        </a>
+                        <a href="https://wcnkxg1u4986.feishu.cn/base/UTBDb7vwiap3zmsJwuJctoVPnWx?from=from_copylink" target="_blank" class="block px-4 py-3 text-sm text-[#a78bfa] font-medium hover:bg-white/5 hover:text-[#c4b5fd] transition-colors border-t border-white/5 flex items-center gap-2">
+                            <span>🚀</span> 懒人兵器库 (AI 提示词/资源)
+                        </a>
+                        <button id="contact-btn" data-contact-trigger class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-t border-white/5 flex items-center gap-2">
+                            <span>💬</span> 联系作者
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">Seedance & 豆包 纯前端视频去水印 (Beta)</h1>
+                <p class="text-gray-400 text-lg">⚠️ 算力警告： 本工具 100% 在您的浏览器内运行，保护隐私。视频处理极其消耗设备算力，10秒视频约需1-3分钟，期间请勿关闭页面。</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-6">
+                <div class="bg-[#1a1a1c] border border-white/10 rounded-2xl p-6 space-y-5">
+                    <div class="text-lg font-semibold text-white">上传 MP4 视频</div>
+                    <div class="flex flex-col gap-3">
+                        <input id="videoInput" type="file" accept="video/mp4" class="hidden">
+                        <div class="flex flex-wrap gap-3">
+                            <button id="selectBtn" class="px-4 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-white text-sm font-medium">选择视频</button>
+                            <button id="processBtn" disabled class="px-4 py-2 rounded-full bg-[#7c3aed] hover:bg-[#6d28d9] transition-all text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed">开始处理</button>
+                        </div>
+                        <div id="fileInfo" class="text-sm text-gray-400">未选择文件</div>
+                    </div>
+                    <div class="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
+                        <div class="text-sm text-gray-300">处理进度</div>
+                        <div class="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                            <div id="progressBar" class="h-2 bg-[#7c3aed] w-0"></div>
+                        </div>
+                        <div id="progressText" class="text-sm text-gray-400">等待处理</div>
+                        <a id="downloadBtn" class="hidden inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-all text-white text-sm font-medium" download>下载处理后视频</a>
+                    </div>
+                    <div class="text-xs text-gray-500">输出将保持音频无损并重编码视频以应用 delogo 滤镜。</div>
+                    <div class="text-xs text-gray-500">本工具采用纯前端极速处理，保护隐私不上云。去除视频水印本质为‘智能模糊/马赛克’处理，适用于基础短视频搬运防查重。</div>
+                </div>
+
+                <div class="bg-[#1a1a1c] border border-white/10 rounded-2xl p-6 space-y-4">
+                    <div class="text-lg font-semibold text-white">视频预览与框选</div>
+                    <div id="videoContainer" class="relative w-full overflow-hidden rounded-xl border border-white/10 bg-black/40">
+                        <video id="previewVideo" class="w-full h-auto" controls></video>
+                        <div id="overlay" class="absolute inset-0 pointer-events-none hidden">
+                            <div id="bbox" class="absolute border-2 border-[#7c3aed] bg-[#7c3aed]/10 pointer-events-auto">
+                                <div class="handle handle-nw" data-handle="nw"></div>
+                                <div class="handle handle-ne" data-handle="ne"></div>
+                                <div class="handle handle-sw" data-handle="sw"></div>
+                                <div class="handle handle-se" data-handle="se"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-400">拖拽或缩放选框，覆盖左上角固定水印区域</div>
+                    <div id="coordText" class="text-sm text-gray-300">x: -, y: -, w: -, h: -</div>
+                    <button id="resetBtn" class="px-4 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-white text-sm font-medium">重置选框</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-white/10 py-8 bg-[#0f0f11]">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+            <p class="mb-2">本工具由 <a href="https://lazyso.com" class="text-gray-300 hover:text-white transition-colors">LazySo 懒人搜索</a> 提供技术支持。探索更多自动化变现玩法 -> <a href="https://lazyso.com" class="text-gray-300 hover:text-white transition-colors">进入主站</a></p>
+            <p>&copy; 2026 LazySo & MarkCut. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div id="contact-modal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity opacity-0" id="modal-backdrop"></div>
+        <div class="relative min-h-screen flex items-center justify-center p-4">
+            <div class="bg-[#1a1a1c] border border-white/10 rounded-2xl max-w-sm w-full p-6 shadow-2xl transform scale-95 opacity-0 transition-all duration-300" id="modal-content">
+                <button id="modal-close" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <h3 class="text-xl font-bold text-white mb-6 text-center">联系作者，获取更多优质工具分享！</h3>
+                <div class="bg-white p-1 rounded-xl mb-6 mx-auto w-fit">
+                    <img src="/vx_qrcode.jpg" alt="WeChat QR Code" class="w-64 h-64 object-contain">
+                </div>
+                <div class="text-center space-y-4">
+                    <p class="text-gray-400 text-sm">微信号: <span class="text-white font-mono select-all">lazyhelper1</span></p>
+                    <button id="copy-wx-btn" class="w-full py-2.5 bg-[#7c3aed] hover:bg-[#6d28d9] text-white rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                        点击复制微信号
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/ffmpeg/ffmpeg.js"></script>
+    <script src="/ffmpeg/util.js"></script>
+    <script>
+        const ui = {
+            input: document.getElementById('videoInput'),
+            selectBtn: document.getElementById('selectBtn'),
+            processBtn: document.getElementById('processBtn'),
+            fileInfo: document.getElementById('fileInfo'),
+            video: document.getElementById('previewVideo'),
+            container: document.getElementById('videoContainer'),
+            overlay: document.getElementById('overlay'),
+            box: document.getElementById('bbox'),
+            coordText: document.getElementById('coordText'),
+            progressBar: document.getElementById('progressBar'),
+            progressText: document.getElementById('progressText'),
+            downloadBtn: document.getElementById('downloadBtn'),
+            resetBtn: document.getElementById('resetBtn')
+        };
+
+        const state = {
+            file: null,
+            ffmpeg: null,
+            objectUrl: null,
+            box: { x: 0, y: 0, w: 0, h: 0 },
+            ratio: { x: 0.05, y: 0.05, w: 0.2, h: 0.12 },
+            dragging: false,
+            resizing: false,
+            handle: null,
+            startX: 0,
+            startY: 0,
+            startBox: null
+        };
+        const promoTargetUrl = 'https://lazyso.com/labs/?from=watermark_widget';
+
+        function triggerLazyPromo(targetUrl = promoTargetUrl) {
+            if (typeof window.showLazyPromo !== 'function') return;
+            window.showLazyPromo(targetUrl);
+        }
+
+        const toolsBtn = document.getElementById('tools-btn');
+        const toolsMenu = document.getElementById('tools-menu');
+        const toolsDropdown = document.getElementById('tools-dropdown');
+        const modal = document.getElementById('contact-modal');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const modalContent = document.getElementById('modal-content');
+        const modalClose = document.getElementById('modal-close');
+        const copyWxBtn = document.getElementById('copy-wx-btn');
+        const contactButtons = document.querySelectorAll('[data-contact-trigger]');
+
+        function toggleDropdown() {
+            const isHidden = toolsMenu.classList.contains('hidden');
+            if (isHidden) {
+                toolsMenu.classList.remove('hidden');
+                void toolsMenu.offsetWidth;
+                toolsMenu.classList.remove('opacity-0', 'scale-95');
+                toolsMenu.classList.add('opacity-100', 'scale-100');
+            } else {
+                toolsMenu.classList.remove('opacity-100', 'scale-100');
+                toolsMenu.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    toolsMenu.classList.add('hidden');
+                }, 200);
+            }
+        }
+
+        toolsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleDropdown();
+        });
+
+        toolsDropdown.addEventListener('mouseenter', () => {
+            if (window.innerWidth >= 768) {
+                toolsMenu.classList.remove('hidden');
+                void toolsMenu.offsetWidth;
+                toolsMenu.classList.remove('opacity-0', 'scale-95');
+                toolsMenu.classList.add('opacity-100', 'scale-100');
+            }
+        });
+
+        toolsDropdown.addEventListener('mouseleave', () => {
+            if (window.innerWidth >= 768) {
+                setTimeout(() => {
+                    if (!toolsDropdown.matches(':hover')) {
+                        toolsMenu.classList.remove('opacity-100', 'scale-100');
+                        toolsMenu.classList.add('opacity-0', 'scale-95');
+                        setTimeout(() => {
+                            if (!toolsDropdown.matches(':hover')) {
+                                toolsMenu.classList.add('hidden');
+                            }
+                        }, 200);
+                    }
+                }, 150);
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!toolsDropdown.contains(e.target)) {
+                toolsMenu.classList.remove('opacity-100', 'scale-100');
+                toolsMenu.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    toolsMenu.classList.add('hidden');
+                }, 200);
+            }
+        });
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modalBackdrop.classList.remove('opacity-0');
+            modalBackdrop.classList.add('opacity-100');
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+        }
+
+        function closeModal() {
+            modalBackdrop.classList.remove('opacity-100');
+            modalBackdrop.classList.add('opacity-0');
+            modalContent.classList.remove('opacity-100', 'scale-100');
+            modalContent.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        contactButtons.forEach((btn) => btn.addEventListener('click', openModal));
+        modalBackdrop.addEventListener('click', closeModal);
+        modalClose.addEventListener('click', closeModal);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+        copyWxBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText('lazyhelper1');
+                copyWxBtn.textContent = '已复制';
+                setTimeout(() => { copyWxBtn.textContent = '点击复制微信号'; }, 1500);
+            } catch (err) {
+                copyWxBtn.textContent = '复制失败';
+                setTimeout(() => { copyWxBtn.textContent = '点击复制微信号'; }, 1500);
+            }
+        });
+
+        function setProgress(pct, text) {
+            ui.progressBar.style.width = `${pct}%`;
+            ui.progressText.textContent = text;
+        }
+
+        function updateBox() {
+            ui.box.style.left = `${state.box.x}px`;
+            ui.box.style.top = `${state.box.y}px`;
+            ui.box.style.width = `${state.box.w}px`;
+            ui.box.style.height = `${state.box.h}px`;
+            ui.coordText.textContent = `x: ${Math.round(state.box.x)}, y: ${Math.round(state.box.y)}, w: ${Math.round(state.box.w)}, h: ${Math.round(state.box.h)}`;
+        }
+
+        function updateBoxFromRatio() {
+            const width = ui.video.clientWidth;
+            const height = ui.video.clientHeight;
+            if (!width || !height) return;
+            state.box = {
+                x: state.ratio.x * width,
+                y: state.ratio.y * height,
+                w: state.ratio.w * width,
+                h: state.ratio.h * height
+            };
+            updateBox();
+        }
+
+        function updateRatioFromBox() {
+            const width = ui.video.clientWidth;
+            const height = ui.video.clientHeight;
+            if (!width || !height) return;
+            state.ratio = {
+                x: state.box.x / width,
+                y: state.box.y / height,
+                w: state.box.w / width,
+                h: state.box.h / height
+            };
+        }
+
+        function clampBox(box) {
+            const width = ui.video.clientWidth;
+            const height = ui.video.clientHeight;
+            const minSize = 20;
+            box.w = Math.max(minSize, Math.min(box.w, width));
+            box.h = Math.max(minSize, Math.min(box.h, height));
+            box.x = Math.max(0, Math.min(box.x, width - box.w));
+            box.y = Math.max(0, Math.min(box.y, height - box.h));
+            return box;
+        }
+
+        function setDefaultBox() {
+            const width = ui.video.clientWidth;
+            const height = ui.video.clientHeight;
+            state.box = clampBox({
+                x: width * 0.05,
+                y: height * 0.05,
+                w: width * 0.2,
+                h: height * 0.12
+            });
+            updateRatioFromBox();
+            updateBox();
+        }
+
+        ui.selectBtn.addEventListener('click', () => ui.input.click());
+        ui.input.addEventListener('change', () => {
+            const file = ui.input.files?.[0];
+            if (!file) return;
+            if (state.objectUrl) URL.revokeObjectURL(state.objectUrl);
+            state.file = file;
+            state.objectUrl = URL.createObjectURL(file);
+            ui.video.src = state.objectUrl;
+            ui.fileInfo.textContent = `已选择：${file.name}`;
+            ui.processBtn.disabled = false;
+            ui.downloadBtn.classList.add('hidden');
+            setProgress(0, '等待处理');
+        });
+
+        ui.video.addEventListener('loadedmetadata', () => {
+            ui.overlay.classList.remove('hidden');
+            setDefaultBox();
+        });
+
+        window.addEventListener('resize', () => {
+            updateBoxFromRatio();
+        });
+
+        ui.resetBtn.addEventListener('click', () => {
+            if (!ui.video.videoWidth) return;
+            setDefaultBox();
+        });
+
+        ui.box.addEventListener('pointerdown', (e) => {
+            const handle = e.target.dataset.handle;
+            state.dragging = !handle;
+            state.resizing = !!handle;
+            state.handle = handle;
+            state.startX = e.clientX;
+            state.startY = e.clientY;
+            state.startBox = { ...state.box };
+            ui.box.setPointerCapture(e.pointerId);
+        });
+
+        ui.box.addEventListener('pointermove', (e) => {
+            if (!state.dragging && !state.resizing) return;
+            const dx = e.clientX - state.startX;
+            const dy = e.clientY - state.startY;
+            let next = { ...state.startBox };
+            if (state.dragging) {
+                next.x += dx;
+                next.y += dy;
+            } else if (state.resizing) {
+                if (state.handle.includes('n')) {
+                    next.y += dy;
+                    next.h -= dy;
+                }
+                if (state.handle.includes('s')) {
+                    next.h += dy;
+                }
+                if (state.handle.includes('w')) {
+                    next.x += dx;
+                    next.w -= dx;
+                }
+                if (state.handle.includes('e')) {
+                    next.w += dx;
+                }
+            }
+            state.box = clampBox(next);
+            updateRatioFromBox();
+            updateBox();
+        });
+
+        ui.box.addEventListener('pointerup', () => {
+            state.dragging = false;
+            state.resizing = false;
+        });
+
+        ui.box.addEventListener('pointercancel', () => {
+            state.dragging = false;
+            state.resizing = false;
+        });
+
+        function getVideoBox() {
+            const width = ui.video.clientWidth;
+            const height = ui.video.clientHeight;
+            const scaleX = ui.video.videoWidth / width;
+            const scaleY = ui.video.videoHeight / height;
+            return {
+                x: Math.round(state.box.x * scaleX),
+                y: Math.round(state.box.y * scaleY),
+                w: Math.round(state.box.w * scaleX),
+                h: Math.round(state.box.h * scaleY)
+            };
+        }
+
+        async function ensureFfmpeg() {
+            try {
+                const ffmpegGlobal = window.FFmpegWASM || window.FFmpeg;
+                if (!ffmpegGlobal) throw new Error('本地 ffmpeg.js 加载失败，找不到全局变量！');
+                const { FFmpeg } = ffmpegGlobal;
+                const { fetchFile } = window.FFmpegUtil || window;
+                if (!window.ffmpegInstance) {
+                    window.ffmpegInstance = new FFmpeg();
+                    window.ffmpegInstance.on('log', ({ message }) => console.log(message));
+                    window.ffmpegInstance.on('progress', ({ progress }) => {
+                        console.log(`Processing: ${(progress * 100).toFixed(2)}%`);
+                        const pct = Math.min(100, Math.max(1, Math.round(progress * 100)));
+                        setProgress(pct, `处理中 ${pct}%`);
+                    });
+                }
+                const coreAbsoluteURL = `${window.location.origin}/ffmpeg/ffmpeg-core.js`;
+                const wasmAbsoluteURL = `${window.location.origin}/ffmpeg/ffmpeg-core.wasm`;
+                console.log('加载绝对路径:', coreAbsoluteURL, wasmAbsoluteURL);
+                const loadPromise = window.ffmpegInstance.load({
+                    coreURL: coreAbsoluteURL,
+                    wasmURL: wasmAbsoluteURL
+                });
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('FFmpeg 加载超时（30秒）！请检查网络面板 wasm 文件是否被拦截，或 MIME 类型是否为 application/wasm')), 30000);
+                });
+                console.log('⏳ 开始执行加载并等待 Worker 响应...');
+                await Promise.race([loadPromise, timeoutPromise]);
+                console.log('✅ 本地引擎加载成功！');
+                return window.ffmpegInstance;
+            } catch (error) {
+                console.error('🚨 致命错误:', error);
+                alert('引擎加载失败，请检查网络或刷新重试。');
+                throw error;
+            }
+        }
+
+        ui.processBtn.addEventListener('click', async () => {
+            if (!state.file) return;
+            ui.processBtn.disabled = true;
+            setProgress(1, '加载 FFmpeg...');
+            try {
+                const ffmpeg = await ensureFfmpeg();
+                setProgress(2, '写入文件...');
+                const inputName = 'input.mp4';
+                const outputName = 'output.mp4';
+                const file = state.file;
+                const { fetchFile } = window.FFmpegUtil || window;
+                await ffmpeg.writeFile(inputName, await fetchFile(file));
+                console.log('正在执行 delogo 处理...');
+                const box = getVideoBox();
+                const x = box.x;
+                const y = box.y;
+                const w = box.w;
+                const h = box.h;
+                setProgress(3, '开始处理...');
+                await ffmpeg.exec([
+                    '-i', inputName,
+                    '-vf', `delogo=x=${x}:y=${y}:w=${w}:h=${h}:show=0`,
+                    '-c:v', 'libx264',
+                    '-preset', 'ultrafast',
+                    '-crf', '23',
+                    '-c:a', 'copy',
+                    outputName
+                ]);
+                console.log('处理完成，正在读取文件...');
+                setProgress(98, '导出结果...');
+                const data = await ffmpeg.readFile(outputName);
+                const blob = new Blob([data.buffer], { type: 'video/mp4' });
+                const url = URL.createObjectURL(blob);
+                ui.downloadBtn.href = url;
+                ui.downloadBtn.download = `seedance_clean_${state.file.name}`;
+                ui.downloadBtn.classList.remove('hidden');
+                triggerLazyPromo();
+                setProgress(100, '完成');
+                await ffmpeg.deleteFile(inputName);
+                await ffmpeg.deleteFile(outputName);
+            } catch (err) {
+                console.error('FFmpeg 执行致命错误:', err);
+                alert('FFmpeg.wasm 加载或处理失败，请查看控制台报错详情。');
+                setProgress(0, `处理失败：${err.message || err}`);
+            } finally {
+                ui.processBtn.disabled = false;
+            }
+        });
+    </script>
+    <script src="/notebooklm/libs/vue.global.js"></script>
+    <script src="/promo-widget.js"></script>
+</body>
+</html>

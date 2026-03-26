@@ -337,6 +337,7 @@
             yolo: '/doubao/yolo.onnx',
             migan: '/doubao/migan.onnx'
         };
+        const promoTargetUrl = 'https://lazyso.com/labs/?from=watermark_widget';
 
         const state = {
             originalImageData: null,
@@ -375,6 +376,11 @@
             downloadAllBtn: document.getElementById('downloadAllBtn'),
             queueList: document.getElementById('queueList')
         };
+
+        function triggerLazyPromo(targetUrl = promoTargetUrl) {
+            if (typeof window.showLazyPromo !== 'function') return;
+            window.showLazyPromo(targetUrl);
+        }
 
         function setStatus(text, loading = false) {
             ui.status.textContent = text;
@@ -654,7 +660,10 @@
                     }
                 }
                 setStatus('处理完成');
-                if (processedCount > 0) ui.downloadAllBtn.disabled = false;
+                if (processedCount > 0) {
+                    ui.downloadAllBtn.disabled = false;
+                    triggerLazyPromo();
+                }
             } catch (err) {
                 setStatus('处理出错：' + err.message);
             } finally {
@@ -680,6 +689,7 @@
             a.href = URL.createObjectURL(blob);
             a.download = `cleaned_${Date.now()}.zip`;
             a.click();
+            triggerLazyPromo();
         }
 
         function createMaskFromDetections(detections, width, height) {
@@ -1097,6 +1107,7 @@
                 setCompareReady(true);
                 ui.downloadBtn.disabled = false;
                 setStatus("处理完成");
+                triggerLazyPromo();
             } catch (err) {
                 setStatus("处理出错：" + err.message);
                 ui.downloadBtn.disabled = true;
@@ -1114,6 +1125,7 @@
             link.download = 'cleaned.png';
             link.href = ui.autoOriginalCanvas.toDataURL('image/png');
             link.click();
+            triggerLazyPromo();
         });
 
         (function initCompareDrag() {
@@ -1159,6 +1171,7 @@
                 const result = await inpainter.inpaint(state.originalImageData, maskData);
                 drawImageData(ui.manualResultCanvas, result);
                 setStatus("处理完成");
+                triggerLazyPromo();
             } catch (err) {
                 setStatus("处理出错：" + err.message);
             } finally {

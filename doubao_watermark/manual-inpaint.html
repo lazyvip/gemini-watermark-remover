@@ -252,6 +252,7 @@
             yolo: '/doubao/yolo.onnx',
             migan: '/doubao/migan.onnx'
         };
+        const promoTargetUrl = 'https://lazyso.com/labs/?from=watermark_widget';
 
         const state = {
             originalImageData: null,
@@ -286,6 +287,11 @@
             manualMaskPanel: document.getElementById('manualMaskPanel'),
             manualGrid: document.getElementById('manualGrid')
         };
+
+        function triggerLazyPromo(targetUrl = promoTargetUrl) {
+            if (typeof window.showLazyPromo !== 'function') return;
+            window.showLazyPromo(targetUrl);
+        }
 
         function setStatus(text, loading = false) {
             ui.status.textContent = text;
@@ -774,6 +780,7 @@
                 const result = await inpainter.inpaint(state.originalImageData, mask);
                 drawImageData(ui.autoResultCanvas, result);
                 setStatus("处理完成");
+                triggerLazyPromo();
             } catch (err) {
                 setStatus("处理出错：" + err.message);
             } finally {
@@ -795,6 +802,7 @@
                 drawImageData(ui.manualResultCanvas, result);
                 ui.manualDownloadBtn.classList.remove('hidden');
                 setStatus("处理完成");
+                triggerLazyPromo();
             } catch (err) {
                 setStatus("处理出错：" + err.message);
             } finally {
@@ -808,6 +816,7 @@
             link.download = 'lazycut-manual-result.png';
             link.href = ui.manualResultCanvas.toDataURL('image/png');
             link.click();
+            triggerLazyPromo();
         });
 
         ui.clearMaskBtn.addEventListener('click', () => {

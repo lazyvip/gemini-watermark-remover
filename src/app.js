@@ -25,6 +25,12 @@ const originalInfo = document.getElementById('originalInfo');
 const processedInfo = document.getElementById('processedInfo');
 const downloadBtn = document.getElementById('downloadBtn');
 const resetBtn = document.getElementById('resetBtn');
+const promoTargetUrl = 'https://lazyso.com/labs/?from=watermark_widget';
+
+function triggerLazyPromo(targetUrl = promoTargetUrl) {
+    if (typeof window.showLazyPromo !== 'function') return;
+    window.showLazyPromo(targetUrl);
+}
 
 /**
  * initialize the application
@@ -184,6 +190,7 @@ async function processSingle(item) {
         zoom.attach('[data-zoomable]');
 
         processedSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        triggerLazyPromo();
     } catch (error) {
         console.error(error);
     }
@@ -268,6 +275,7 @@ async function processQueue() {
 
     if (processedCount > 0) {
         downloadAllBtn.style.display = 'flex';
+        triggerLazyPromo();
     }
 }
 
@@ -291,6 +299,7 @@ function downloadImage(item) {
     a.href = item.processedUrl;
     a.download = `unwatermarked_${item.name.replace(/\.[^.]+$/, '')}.png`;
     a.click();
+    triggerLazyPromo();
 }
 
 async function downloadAll() {
@@ -308,6 +317,7 @@ async function downloadAll() {
     a.href = URL.createObjectURL(blob);
     a.download = `unwatermarked_${Date.now()}.zip`;
     a.click();
+    triggerLazyPromo();
 }
 
 init();

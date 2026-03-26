@@ -23,6 +23,12 @@ createApp({
         const processProgress = ref(0);
         const processedPdfUrl = ref(null);
         const downloadName = ref('');
+        const promoTargetUrl = 'https://lazyso.com/labs/?from=watermark_widget';
+
+        const triggerLazyPromo = (targetUrl = promoTargetUrl) => {
+            if (typeof window.showLazyPromo !== 'function') return;
+            window.showLazyPromo(targetUrl);
+        };
 
         const tabName = computed(() => {
             const map = {
@@ -266,6 +272,7 @@ createApp({
                 
                 showProcessed.value = true;
                 await renderCurrentPage();
+                triggerLazyPromo();
                 
             } catch (e) {
                 console.error(e);
@@ -341,6 +348,7 @@ createApp({
                 
                 showProcessed.value = true;
                 await renderCurrentPage();
+                triggerLazyPromo();
 
             } catch (e) {
                 console.error("Process All Error:", e);
@@ -354,6 +362,7 @@ createApp({
         const processAll = async () => {
             if (isProcessing.value) return;
             isProcessing.value = true;
+            let completedCount = 0;
 
             for (let i = 0; i < files.value.length; i++) {
                 const file = files.value[i];
@@ -365,6 +374,7 @@ createApp({
                         await processImage(file);
                     }
                     file.status = 'completed';
+                    completedCount++;
                 } catch (e) {
                     console.error(e);
                     file.status = 'error';
@@ -373,6 +383,9 @@ createApp({
             }
 
             isProcessing.value = false;
+            if (completedCount > 0) {
+                triggerLazyPromo();
+            }
         };
 
         const processImage = async (fileObj) => {

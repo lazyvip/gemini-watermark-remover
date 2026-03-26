@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LazySo 懒人去水印 - 免费无损消除 Gemini/AI 图片水印 (纯前端隐私保护)</title>
+    <meta name="description" content="LazySo 旗下免费工具。专注 AI 去水印（Gemini/豆包/可灵），采用浏览器本地处理技术，保护隐私。无需上传，毫秒级无损还原。">
+    <meta name="keywords" content="LazyCut, MarkCut, Gemini去水印, NotebookLM去水印, PDF去水印, 图片去水印, LazySo, 免费工具, 本地处理">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://clean.lazyso.com/">
+    <meta property="og:title" content="LazySo 懒人去水印 - 免费无损消除 Gemini/AI 图片水印 (纯前端隐私保护)">
+    <meta property="og:description" content="LazySo 旗下免费工具。专注 AI 去水印（Gemini/豆包/可灵），采用浏览器本地处理技术，保护隐私。无需上传，毫秒级无损还原。">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="LazySo 懒人去水印 - 免费无损消除 Gemini/AI 图片水印 (纯前端隐私保护)">
+    <link rel="canonical" href="https://clean.lazyso.com/">
+    <meta property="twitter:description" content="LazySo 旗下免费工具。专注 AI 去水印（Gemini/豆包/可灵），采用浏览器本地处理技术，保护隐私。无需上传，毫秒级无损还原。">
+    <link rel="alternate" hreflang="zh-Hans" href="https://clean.lazyso.com/" />
+    <link rel="alternate" hreflang="en" href="https://clean.lazyso.com/en/" />
+    <link rel="alternate" hreflang="x-default" href="https://clean.lazyso.com/" />
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "LazySo 懒人去水印",
+            "url": "https://clean.lazyso.com/",
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "Web",
+            "description": "LazySo 旗下免费工具。专注 AI 去水印（Gemini/豆包/可灵），采用浏览器本地处理技术，保护隐私。无需上传，毫秒级无损还原。",
+            "author": {
+                "@type": "Organization",
+                "name": "LazySo (懒人搜索)",
+                "url": "https://lazyso.com"
+            },
+            "maintainer": {
+                "@type": "Organization",
+                "name": "LazySo (懒人搜索)",
+                "url": "https://lazyso.com"
+            },
+            "isPartOf": {
+                "@type": "WebSite",
+                "url": "https://lazyso.com",
+                "name": "LazySo"
+            }
+        }
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://hm.baidu.com" crossorigin>
+    <link rel="dns-prefetch" href="https://hm.baidu.com">
+    <link rel="stylesheet" href="/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?15a7d418f6a8b5c7f67943624afd4bc7";
+            var s = document.getElementsByTagName("script")[0]; 
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+</head>
+<body class="theme-gemini bg-[#0f0f11] text-gray-200 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="border-b border-white/10 bg-[#0f0f11]/90 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <svg class="h-8 w-8 text-[#7c3aed]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m12 3-1.9 5.8-5.8 1.9 5.8 1.9 1.9 5.8 1.9-5.8 5.8-1.9-5.8-1.9Z"></path>
+                </svg>
+                <div class="flex flex-col leading-tight">
+                    <div class="text-xl font-bold tracking-tight text-white">
+                        <a href="/" class="hover:text-white" title="LazySo 懒人去水印">LazySo 懒人去水印</a>
+                    </div>
+                    <span class="text-xs text-gray-400">Powered by LazySo Labs</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="/en/" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-white text-sm font-medium">🌐 English</a>
+                <div class="relative" id="tools-dropdown">
+                    <button id="tools-btn" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 backdrop-blur-sm transition-all text-white text-sm font-medium group">
+                        更多工具 <span class="group-hover:rotate-180 transition-transform duration-200">▾</span>
+                    </button>
+                    <div id="tools-menu" class="hidden absolute right-0 mt-2 w-64 rounded-xl bg-[#1a1a1c] border border-white/10 shadow-xl overflow-hidden z-50 transform origin-top-right transition-all duration-200 opacity-0 scale-95">
+                        <a href="https://lazyso.com/" class="block px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors flex items-center gap-2">
+                            <span>🏠</span> 回到 LazySo 主站
+                        </a>
+                        <a href="/seedance-video/" class="block px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-t border-white/5 flex items-center gap-2">
+                            <span>🎬</span> Seedance / 豆包视频去水印
+                        </a>
+                        <a href="https://wcnkxg1u4986.feishu.cn/base/UTBDb7vwiap3zmsJwuJctoVPnWx?from=from_copylink" target="_blank" class="block px-4 py-3 text-sm text-[#a78bfa] font-medium hover:bg-white/5 hover:text-[#c4b5fd] transition-colors border-t border-white/5 flex items-center gap-2">
+                            <span>🚀</span> 懒人兵器库 (AI 提示词/资源)
+                        </a>
+                        <button id="contact-btn" data-contact-trigger class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors border-t border-white/5 flex items-center gap-2">
+                            <span>💬</span> 联系作者
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="max-w-5xl w-full mx-auto">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">
+                    专业的水印工具套件
+                </h1>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+                    移除Gemini（Nano banano)图片水印，NotebookLM PDF水印，Seedance视频去水印，图片水印。移除豆包/可灵平台图片水印，还可手动选择移除水印位置
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Gemini Card -->
+                <a href="gemini/" class="group relative bg-[#27272a] rounded-2xl p-8 border border-white/5 hover:border-[#7c3aed]/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(124,58,237,0.1)] flex flex-col">
+                    <div class="mb-6 w-14 h-14 bg-[#7c3aed]/20 rounded-xl flex items-center justify-center text-[#7c3aed] group-hover:scale-110 transition-transform duration-300">
+                         <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8-5.8 1.9 5.8 1.9 1.9 5.8 1.9-5.8 5.8-1.9-5.8-1.9Z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-3">Gemini 水印去除工具</h3>
+                    <p class="text-gray-400 mb-8 flex-grow">
+                        采用反向 Alpha 混合算法，完美还原 Gemini 生成的原始图片。支持批量处理，毫秒级响应。
+                    </p>
+                    <div class="flex items-center text-[#7c3aed] font-medium">
+                        开始使用
+                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </div>
+                </a>
+
+                <!-- NotebookLM Card -->
+                <a href="notebooklm/" class="group relative bg-[#27272a] rounded-2xl p-8 border border-white/5 hover:border-[#3B82F6]/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)] flex flex-col">
+                    <div class="mb-6 w-14 h-14 bg-[#3B82F6]/20 rounded-xl flex items-center justify-center text-[#3B82F6] group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-3">NotebookLM 水印去除工具</h3>
+                    <p class="text-gray-400 mb-8 flex-grow">
+                        基于修复算法，支持图片、PDF 水印处理。完全本地运行，保护您的文档隐私。
+                    </p>
+                    <div class="flex items-center text-[#3B82F6] font-medium">
+                        开始使用
+                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </div>
+                </a>
+                <a href="/seedance-video/" class="group relative bg-[#27272a] rounded-2xl p-8 border border-white/5 hover:border-[#ec4899]/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(236,72,153,0.12)] flex flex-col">
+                    <div class="mb-6 w-14 h-14 bg-[#ec4899]/20 rounded-xl flex items-center justify-center text-[#ec4899] group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4z"></path><path d="M12 7v6"></path><path d="M8 11h8"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-3 flex flex-wrap items-center gap-2">Seedance / 豆包视频去水印 (Beta)<span class="inline-flex items-center px-2 py-0.5 text-xs font-bold rounded-full bg-red-500 text-white">🔥 HOT</span></h3>
+                    <p class="text-gray-400 mb-8 flex-grow">纯前端视频处理引擎。通过智能像素插值抹除左上角水印。0 上传，利用本地算力保护绝对隐私。</p>
+                    <div class="flex items-center text-[#ec4899] font-medium">
+                        开始使用
+                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </div>
+                </a>
+                <!-- 豆包/可灵 去水印 Card -->
+                <a href="/doubao/" class="group relative bg-[#27272a] rounded-2xl p-8 border border-white/5 hover:border-[#10B981]/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(16,185,129,0.12)] flex flex-col">
+                    <div class="mb-6 w-14 h-14 bg-[#10B981]/20 rounded-xl flex items-center justify-center text-[#10B981] group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-3">豆包 / 可灵 水印去除</h3>
+                    <p class="text-gray-400 mb-8 flex-grow">支持多平台水印去除豆包、可灵、即梦、AI生成等，AI智能识别水印位置，无损画质处理，让您的图片焕然一新</p>
+                    <div class="flex items-center text-[#10B981] font-medium">
+                        开始使用
+                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </div>
+                </a>
+
+                <!-- 手动涂抹去水印 Card -->
+                <a href="/manual/" class="group relative bg-[#27272a] rounded-2xl p-8 border border-white/5 hover:border-[#F59E0B]/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(245,158,11,0.12)] flex flex-col">
+                    <div class="mb-6 w-14 h-14 bg-[#F59E0B]/20 rounded-xl flex items-center justify-center text-[#F59E0B] group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20l9-9-5-5-9 9v5h5z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-3">手动涂抹去水印</h3>
+                    <p class="text-gray-400 mb-8 flex-grow">用画笔标记需要擦除的区域，然后点击修复即可</p>
+                    <div class="flex items-center text-[#F59E0B] font-medium">
+                        开始使用
+                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </div>
+                </a>
+            </div>
+            <div class="mt-10 text-center">
+                <p class="text-gray-300 text-base md:text-lg max-w-3xl mx-auto">
+                    本站点提供完全免费的AI去水印服务，无需注册账户，无需付费订阅。您可以直接上传图片并享受专业级的去水印处理。
+                </p>
+                <button data-contact-trigger class="mt-6 inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-white text-sm font-medium">
+                    <span>💬</span> 联系作者
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-8 bg-[#0f0f11]">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+            <p class="mb-2">本工具由 <a href="https://lazyso.com" class="text-gray-300 hover:text-white transition-colors">LazySo 懒人搜索</a> 提供技术支持。探索更多自动化变现玩法 -> <a href="https://lazyso.com" class="text-gray-300 hover:text-white transition-colors">进入主站</a></p>
+            <p>&copy; 2026 LazySo & MarkCut. All rights reserved.</p>
+        </div>
+    </footer>
+    <!-- Contact Modal -->
+    <div id="contact-modal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity opacity-0" id="modal-backdrop"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative min-h-screen flex items-center justify-center p-4">
+            <div class="bg-[#1a1a1c] border border-white/10 rounded-2xl max-w-sm w-full p-6 shadow-2xl transform scale-95 opacity-0 transition-all duration-300" id="modal-content">
+                <!-- Close Button -->
+                <button id="modal-close" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                
+                <h3 class="text-xl font-bold text-white mb-6 text-center">联系作者，获取更多优质工具分享！</h3>
+                    
+                    <div class="bg-white p-1 rounded-xl mb-6 mx-auto w-fit">
+                        <img src="/vx_qrcode.jpg" alt="WeChat QR Code" class="w-64 h-64 object-contain">
+                    </div>
+                
+                <div class="text-center space-y-4">
+                    <p class="text-gray-400 text-sm">微信号: <span class="text-white font-mono select-all">lazyhelper1</span></p>
+                    <button id="copy-wx-btn" class="w-full py-2.5 bg-[#7c3aed] hover:bg-[#6d28d9] text-white rounded-xl font-medium transition-all active:scale-95 flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                        点击复制微信号
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dropdown Logic
+        const toolsBtn = document.getElementById('tools-btn');
+        const toolsMenu = document.getElementById('tools-menu');
+        const toolsDropdown = document.getElementById('tools-dropdown');
+
+        function toggleDropdown() {
+            const isHidden = toolsMenu.classList.contains('hidden');
+            if (isHidden) {
+                toolsMenu.classList.remove('hidden');
+                // Trigger reflow
+                void toolsMenu.offsetWidth;
+                toolsMenu.classList.remove('opacity-0', 'scale-95');
+                toolsMenu.classList.add('opacity-100', 'scale-100');
+            } else {
+                toolsMenu.classList.remove('opacity-100', 'scale-100');
+                toolsMenu.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    toolsMenu.classList.add('hidden');
+                }, 200);
+            }
+        }
+
+        // Toggle on click
+        toolsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleDropdown();
+        });
+
+        // Hover effect for desktop
+        toolsDropdown.addEventListener('mouseenter', () => {
+            if (window.innerWidth >= 768) {
+                toolsMenu.classList.remove('hidden');
+                void toolsMenu.offsetWidth;
+                toolsMenu.classList.remove('opacity-0', 'scale-95');
+                toolsMenu.classList.add('opacity-100', 'scale-100');
+            }
+        });
+
+        toolsDropdown.addEventListener('mouseleave', () => {
+            if (window.innerWidth >= 768) {
+                setTimeout(() => {
+                    if (!toolsDropdown.matches(':hover')) {
+                        toolsMenu.classList.remove('opacity-100', 'scale-100');
+                        toolsMenu.classList.add('opacity-0', 'scale-95');
+                        setTimeout(() => {
+                            if (!toolsDropdown.matches(':hover')) {
+                                toolsMenu.classList.add('hidden');
+                            }
+                        }, 200);
+                    }
+                }, 150);
+            }
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!toolsDropdown.contains(e.target)) {
+                toolsMenu.classList.remove('opacity-100', 'scale-100');
+                toolsMenu.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    toolsMenu.classList.add('hidden');
+                }, 200);
+            }
+        });
+
+        // Modal Logic
+        const contactButtons = document.querySelectorAll('[data-contact-trigger]');
+        const modal = document.getElementById('contact-modal');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const modalContent = document.getElementById('modal-content');
+        const modalClose = document.getElementById('modal-close');
+        const copyWxBtn = document.getElementById('copy-wx-btn');
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            // Trigger reflow
+            void modal.offsetWidth;
+            modalBackdrop.classList.remove('opacity-0');
+            modalBackdrop.classList.add('opacity-100');
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+            document.body.style.overflow = 'hidden';
+            
+            // Close dropdown if open
+            toolsMenu.classList.add('hidden');
+        }
+
+        function closeModal() {
+            modalBackdrop.classList.remove('opacity-100');
+            modalBackdrop.classList.add('opacity-0');
+            modalContent.classList.remove('opacity-100', 'scale-100');
+            modalContent.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        contactButtons.forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openModal();
+            });
+        });
+
+        modalClose.addEventListener('click', closeModal);
+        modalBackdrop.addEventListener('click', closeModal);
+
+        // Copy WeChat ID
+        copyWxBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText('lazyhelper1');
+                const originalText = copyWxBtn.innerHTML;
+                copyWxBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 复制成功`;
+                copyWxBtn.classList.remove('bg-[#7c3aed]', 'hover:bg-[#6d28d9]');
+                copyWxBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                
+                setTimeout(() => {
+                    copyWxBtn.innerHTML = originalText;
+                    copyWxBtn.classList.add('bg-[#7c3aed]', 'hover:bg-[#6d28d9]');
+                    copyWxBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+                alert('复制失败，请手动复制：lazyhelper1');
+            }
+        });
+    </script>
+</body>
+</html>

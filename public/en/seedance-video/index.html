@@ -155,7 +155,6 @@
 
     <script src="/ffmpeg/ffmpeg.js"></script>
     <script src="/ffmpeg/util.js"></script>
-    <script src="/promo-widget.js"></script>
     <script>
         const ui = {
             input: document.getElementById('videoInput'),
@@ -186,6 +185,12 @@
             startY: 0,
             startBox: null
         };
+        const promoTargetUrl = 'https://lazyso.com/labs/?from=watermark_widget';
+
+        function triggerLazyPromo(targetUrl = promoTargetUrl) {
+            if (typeof window.showLazyPromo !== 'function') return;
+            window.showLazyPromo(targetUrl);
+        }
 
         const toolsBtn = document.getElementById('tools-btn');
         const toolsMenu = document.getElementById('tools-menu');
@@ -510,6 +515,7 @@
                 ui.downloadBtn.href = url;
                 ui.downloadBtn.download = `seedance_clean_${state.file.name}`;
                 ui.downloadBtn.classList.remove('hidden');
+                triggerLazyPromo();
                 setProgress(100, 'Done');
                 await ffmpeg.deleteFile(inputName);
                 await ffmpeg.deleteFile(outputName);

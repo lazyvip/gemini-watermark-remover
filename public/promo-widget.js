@@ -1,5 +1,5 @@
 (() => {
-  if (!window.Vue || document.getElementById('promo-widget-root')) {
+  if (!window.Vue) {
     return;
   }
 
@@ -14,28 +14,38 @@
     document.head.appendChild(style);
   }
 
+  if (document.getElementById('promo-widget-root')) {
+    return;
+  }
   const root = document.createElement('div');
   root.id = 'promo-widget-root';
   document.body.appendChild(root);
 
-  const { createApp, onMounted, onBeforeUnmount, ref } = window.Vue;
+  const { createApp, onBeforeUnmount, ref } = window.Vue;
+  const defaultUrl = 'https://lazyso.com/labs/?from=watermark_widget';
+  let promoApi = null;
+
+  window.showLazyPromo = (targetUrl) => {
+    if (!promoApi) {
+      return;
+    }
+    if (typeof targetUrl === 'string' && targetUrl.trim()) {
+      promoApi.ctaUrl.value = targetUrl.trim();
+    }
+    promoApi.isVisible.value = true;
+  };
 
   createApp({
     setup() {
       const isVisible = ref(false);
-      let timer = null;
-      onMounted(() => {
-        timer = setTimeout(() => {
-          isVisible.value = true;
-        }, 9000);
-      });
+      const ctaUrl = ref(defaultUrl);
+
+      promoApi = { isVisible, ctaUrl };
+
       onBeforeUnmount(() => {
-        if (timer) {
-          clearTimeout(timer);
-          timer = null;
-        }
+        promoApi = null;
       });
-      return { isVisible };
+      return { isVisible, ctaUrl };
     },
     template: `
       <Transition name="slide-up-fade">
@@ -56,7 +66,7 @@
               你在这处理水印，别人已经把这套流程跑通变现了。LazySo内部社群已更新本周【AI 视频/自媒体矩阵】的最新变现 SOP 与对标账号。别只做无情的做号机器，来看看底层的商业逻辑。
             </p>
             <a
-              href="https://lazyso.com/labs/?from=watermark_widget"
+              :href="ctaUrl"
               target="_blank"
               rel="noopener noreferrer"
               class="mt-4 inline-flex w-full items-center justify-center rounded-xl py-2 px-4 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 transition-transform hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(99,102,241,0.45)]"
