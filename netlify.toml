@@ -1,0 +1,3 @@
+[build]
+  command = "NODE_ENV=production pnpm build"
+  publish = "dist"
