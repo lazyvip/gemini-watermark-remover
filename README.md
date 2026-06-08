@@ -115,6 +115,8 @@ By capturing the watermark on a known solid background, we reconstruct the exact
 | Width > 1024 **AND** Height > 1024 | 96×96 | 64px | 64px |
 | Otherwise | 48×48 | 32px | 32px |
 
+**Note**: These are default positions only. The engine uses **adaptive template matching** to find the actual watermark location, making it robust against Gemini watermark position changes.
+
 ## Project Structure
 
 ```text

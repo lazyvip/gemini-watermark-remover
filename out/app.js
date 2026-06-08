@@ -2454,8 +2454,8 @@
     } else {
       return {
         logoSize: 48,
-        marginRight: 32,
-        marginBottom: 32
+        marginRight: 96,
+        marginBottom: 95
       };
     }
   }

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水印位置对比分析</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .section {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .image-comparison {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .image-box {
+            flex: 1;
+            min-width: 300px;
+        }
+        .image-container {
+            position: relative;
+            display: inline-block;
+            border: 2px solid #333;
+            background: #000;
+        }
+        .image-container img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+        .watermark-box {
+            position: absolute;
+            border: 3px solid red;
+            background: rgba(255, 0, 0, 0.1);
+            pointer-events: none;
+            box-sizing: border-box;
+        }
+        .watermark-box.actual {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button.secondary {
+            background: #2196F3;
+        }
+        button.secondary:hover {
+            background: #0b7dda;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .info-item {
+            background: #333;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        .info-item h4 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+        }
+        .info-item p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border: 2px solid;
+        }
+        .legend-color.detected {
+            border-color: red;
+            background: rgba(255, 0, 0, 0.1);
+        }
+        .legend-color.actual {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+        .adjust-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin: 15px 0;
+        }
+        .adjust-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .adjust-item label {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gemini 水印位置对比分析</h1>
+        
+        <div class="section">
+            <h2>1. 图片基本信息</h2>
+            <div class="controls">
+                <input type="file" id="imageInput" accept="image/*">
+                <button onclick="loadTestImage()">加载测试图片</button>
+            </div>
+            <div id="basicInfo" class="info-grid"></div>
+        </div>
+
+        <div class="section">
+            <h2>2. 水印检测规则</h2>
+            <div id="detectionRules" class="info-grid"></div>
+        </div>
+
+        <div class="section">
+            <h2>3. 水印位置可视化</h2>
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color detected"></div>
+                    <span>算法检测位置（红色）</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color actual"></div>
+                    <span>实际水印位置（绿色）- 可调整</span>
+                </div>
+            </div>
+            
+            <div class="adjust-controls">
+                <div class="adjust-item">
+                    <label>实际 X 偏移: <input type="number" id="actualX" value="0" onchange="updateActualPosition()"></label>
+                </div>
+                <div class="adjust-item">
+                    <label>实际 Y 偏移: <input type="number" id="actualY" value="0" onchange="updateActualPosition()"></label>
+                </div>
+                <div class="adjust-item">
+                    <label>实际宽度: <input type="number" id="actualWidth" value="48" onchange="updateActualPosition()"></label>
+                </div>
+                <div class="adjust-item">
+                    <label>实际高度: <input type="number" id="actualHeight" value="48" onchange="updateActualPosition()"></label>
+                </div>
+                <button class="secondary" onclick="resetActualPosition()">重置</button>
+            </div>
+
+            <div class="image-comparison">
+                <div class="image-box">
+                    <h3>原图（带水印）</h3>
+                    <div class="image-container" id="imageContainer">
+                        <img id="testImage" src="" style="display: none;">
+                        <div class="watermark-box" id="detectedBox"></div>
+                        <div class="watermark-box actual" id="actualBox"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>4. 位置对比分析</h2>
+            <div id="positionComparison" class="info-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentImage = null;
+        let detectedPosition = null;
+        let actualPosition = null;
+
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                loadImage(file);
+            }
+        });
+
+        function loadTestImage() {
+            const testImagePath = '微信图片_20260608152411_1696_10.png';
+            const img = new Image();
+            img.onload = function() {
+                currentImage = img;
+                displayImage(img);
+                analyzeImage(img);
+            };
+            img.onerror = function() {
+                alert('无法加载测试图片，请手动选择');
+            };
+            img.src = testImagePath;
+        }
+
+        function loadImage(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    currentImage = img;
+                    displayImage(img);
+                    analyzeImage(img);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function displayImage(img) {
+            const image = document.getElementById('testImage');
+            image.src = img.src;
+            image.style.display = 'block';
+        }
+
+        function analyzeImage(img) {
+            const width = img.width;
+            const height = img.height;
+
+            // 显示基本信息
+            document.getElementById('basicInfo').innerHTML = `
+                <div class="info-item">
+                    <h4>尺寸信息</h4>
+                    <p>宽度: ${width}px</p>
+                    <p>高度: ${height}px</p>
+                    <p>面积: ${(width * height).toLocaleString()} 像素</p>
+                    <p>宽高比: ${(width / height).toFixed(2)}</p>
+                </div>
+                <div class="info-item">
+                    <h4>文件信息</h4>
+                    <p>文件名: ${img.src.split('/').pop()}</p>
+                    <p>类型: PNG</p>
+                </div>
+            `;
+
+            // 检测水印配置
+            const config = detectWatermarkConfig(width, height);
+            detectedPosition = calculateWatermarkPosition(width, height, config);
+
+            // 显示检测规则
+            document.getElementById('detectionRules').innerHTML = `
+                <div class="info-item">
+                    <h4>检测条件</h4>
+                    <p>宽 > 1024: ${width > 1024 ? '✓ 是' : '✗ 否'} (${width}px)</p>
+                    <p>高 > 1024: ${height > 1024 ? '✓ 是' : '✗ 否'} (${height}px)</p>
+                    <p>使用 96×96 水印: ${width > 1024 && height > 1024 ? '✓ 是' : '✗ 否'}</p>
+                </div>
+                <div class="info-item">
+                    <h4>检测到的水印配置</h4>
+                    <p>水印尺寸: ${config.logoSize} × ${config.logoSize}</p>
+                    <p>右边距: ${config.marginRight}px</p>
+                    <p>下边距: ${config.marginBottom}px</p>
+                </div>
+                <div class="info-item">
+                    <h4>算法检测位置</h4>
+                    <p>X 坐标: ${detectedPosition.x}</p>
+                    <p>Y 坐标: ${detectedPosition.y}</p>
+                    <p>相对位置: (${((detectedPosition.x / width) * 100).toFixed(2)}%, ${((detectedPosition.y / height) * 100).toFixed(2)}%)</p>
+                </div>
+            `;
+
+            // 初始化实际位置（默认与检测位置相同）
+            actualPosition = { ...detectedPosition };
+            document.getElementById('actualWidth').value = actualPosition.width;
+            document.getElementById('actualHeight').value = actualPosition.height;
+
+            // 绘制水印框
+            drawWatermarkBoxes();
+            updatePositionComparison();
+        }
+
+        function detectWatermarkConfig(imageWidth, imageHeight) {
+            if (imageWidth > 1024 && imageHeight > 1024) {
+                return {
+                    logoSize: 96,
+                    marginRight: 64,
+                    marginBottom: 64
+                };
+            } else {
+                return {
+                    logoSize: 48,
+                    marginRight: 32,
+                    marginBottom: 32
+                };
+            }
+        }
+
+        function calculateWatermarkPosition(imageWidth, imageHeight, config) {
+            const { logoSize, marginRight, marginBottom } = config;
+            return {
+                x: imageWidth - marginRight - logoSize,
+                y: imageHeight - marginBottom - logoSize,
+                width: logoSize,
+                height: logoSize
+            };
+        }
+
+        function drawWatermarkBoxes() {
+            if (!currentImage || !detectedPosition || !actualPosition) return;
+
+            const img = document.getElementById('testImage');
+            const detectedBox = document.getElementById('detectedBox');
+            const actualBox = document.getElementById('actualBox');
+
+            // 计算缩放比例
+            const displayWidth = img.clientWidth;
+            const displayHeight = img.clientHeight;
+            const naturalWidth = img.naturalWidth;
+            const naturalHeight = img.naturalHeight;
+
+            const scaleX = displayWidth / naturalWidth;
+            const scaleY = displayHeight / naturalHeight;
+
+            // 绘制检测到的位置（红色）
+            detectedBox.style.left = (detectedPosition.x * scaleX) + 'px';
+            detectedBox.style.top = (detectedPosition.y * scaleY) + 'px';
+            detectedBox.style.width = (detectedPosition.width * scaleX) + 'px';
+            detectedBox.style.height = (detectedPosition.height * scaleY) + 'px';
+
+            // 绘制实际位置（绿色）
+            actualBox.style.left = (actualPosition.x * scaleX) + 'px';
+            actualBox.style.top = (actualPosition.y * scaleY) + 'px';
+            actualBox.style.width = (actualPosition.width * scaleX) + 'px';
+            actualBox.style.height = (actualPosition.height * scaleY) + 'px';
+        }
+
+        function updateActualPosition() {
+            if (!detectedPosition) return;
+
+            const offsetX = parseInt(document.getElementById('actualX').value) || 0;
+            const offsetY = parseInt(document.getElementById('actualY').value) || 0;
+            const width = parseInt(document.getElementById('actualWidth').value) || 48;
+            const height = parseInt(document.getElementById('actualHeight').value) || 48;
+
+            actualPosition = {
+                x: detectedPosition.x + offsetX,
+                y: detectedPosition.y + offsetY,
+                width: width,
+                height: height
+            };
+
+            drawWatermarkBoxes();
+            updatePositionComparison();
+        }
+
+        function resetActualPosition() {
+            if (!detectedPosition) return;
+
+            document.getElementById('actualX').value = 0;
+            document.getElementById('actualY').value = 0;
+            document.getElementById('actualWidth').value = detectedPosition.width;
+            document.getElementById('actualHeight').value = detectedPosition.height;
+
+            actualPosition = { ...detectedPosition };
+            drawWatermarkBoxes();
+            updatePositionComparison();
+        }
+
+        function updatePositionComparison() {
+            if (!detectedPosition || !actualPosition) return;
+
+            const diffX = actualPosition.x - detectedPosition.x;
+            const diffY = actualPosition.y - detectedPosition.y;
+            const diffWidth = actualPosition.width - detectedPosition.width;
+            const diffHeight = actualPosition.height - detectedPosition.height;
+
+            document.getElementById('positionComparison').innerHTML = `
+                <div class="info-item">
+                    <h4>位置差异</h4>
+                    <p>X 差异: ${diffX}px ${diffX !== 0 ? '⚠️' : '✓'}</p>
+                    <p>Y 差异: ${diffY}px ${diffY !== 0 ? '⚠️' : '✓'}</p>
+                    <p>宽度差异: ${diffWidth}px ${diffWidth !== 0 ? '⚠️' : '✓'}</p>
+                    <p>高度差异: ${diffHeight}px ${diffHeight !== 0 ? '⚠️' : '✓'}</p>
+                </div>
+                <div class="info-item">
+                    <h4>实际水印位置</h4>
+                    <p>X: ${actualPosition.x}</p>
+                    <p>Y: ${actualPosition.y}</p>
+                    <p>宽度: ${actualPosition.width}</p>
+                    <p>高度: ${actualPosition.height}</p>
+                </div>
+                <div class="info-item">
+                    <h4>建议的修复方案</h4>
+                    ${diffX !== 0 || diffY !== 0 ? `
+                        <p>需要调整边距参数：</p>
+                        <p>右边距应调整为: ${detectedPosition.marginRight - diffX}px</p>
+                        <p>下边距应调整为: ${detectedPosition.marginBottom - diffY}px</p>
+                    ` : '<p>✓ 当前检测规则正确</p>'}
+                </div>
+            `;
+        }
+
+        // 页面加载时自动加载测试图片
+        window.onload = function() {
+            loadTestImage();
+        };
+
+        // 窗口大小改变时重新绘制
+        window.onresize = function() {
+            drawWatermarkBoxes();
+        };
+    </script>
+</body>
+</html>

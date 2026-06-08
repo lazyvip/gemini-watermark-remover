@@ -52,3 +52,21 @@ export function showLoading(text = null) {
 export function hideLoading() {
     loadingOverlay.style.display = 'none';
 }
+
+/**
+ * Clone ImageData, compatible with both browser ImageData and plain objects
+ */
+export function cloneImageData(imageData) {
+    if (typeof ImageData !== 'undefined' && imageData instanceof ImageData) {
+        return new ImageData(
+            new Uint8ClampedArray(imageData.data),
+            imageData.width,
+            imageData.height
+        );
+    }
+    return {
+        width: imageData.width,
+        height: imageData.height,
+        data: new Uint8ClampedArray(imageData.data)
+    };
+}
