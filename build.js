@@ -27,9 +27,9 @@ const jsBanner = `/*!
  */`;
 
 const userscriptBanner = `// ==UserScript==
-// @name         Gemini NanoBanana Watermark Remover
-// @name:zh-CN   Gemini NanoBanana 图片水印移除
-// @namespace    https://github.com/journey-ad
+// @name         Gemini 去水印神器 (LazySo Edition)
+// @name:zh-CN   Gemini 去水印神器 (LazySo Edition)
+// @namespace    https://clean.lazyso.com/
 // @version      0.1.6
 // @description  Automatically removes watermarks from Gemini AI generated images
 // @description:zh-CN 自动移除 Gemini AI 生成图像中的水印
@@ -114,7 +114,17 @@ const userscriptCtx = await esbuild.context({
   format: 'iife',
   outfile: 'dist/userscript/gemini-watermark-remover.user.js',
   banner: { js: userscriptBanner },
-  minify: false
+  minify: false,
+  plugins: [{
+    name: 'copy-userscript',
+    setup(build) {
+      build.onEnd(() => {
+        if (existsSync('dist/userscript/gemini-watermark-remover.user.js')) {
+          cpSync('dist/userscript/gemini-watermark-remover.user.js', 'dist/lazyso-gemini.user.js');
+        }
+      });
+    }
+  }]
 });
 
 console.log(`🚀 Starting build process... [${isProd ? 'PRODUCTION' : 'DEVELOPMENT'}]`);

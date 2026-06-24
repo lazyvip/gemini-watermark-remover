@@ -33,7 +33,6 @@
   "status.loading": "Loading resources...",
   "status.pending": "Waiting...",
   "status.processing": "Processing...",
-  "status.success": "Done",
   "status.failed": "Failed",
   "info.size": "Size",
   "info.watermark": "Watermark",
@@ -41,6 +40,5 @@
   "info.status": "Status",
   "info.removed": "Removed",
   "original.not_gemini": "⚠️ Not a Gemini original image. Lossless removal may fail.",
-  "original.not_original": "⚠️ Not original size. Lossless removal may fail.",
-  "original.pass": "✅ Gemini original image detected. Ready for lossless removal."
+  "original.not_original": "⚠️ Not original size. Lossless removal may fail."
 }

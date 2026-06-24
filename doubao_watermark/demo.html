@@ -639,7 +639,7 @@
                     const { detections, mask } = await detector.predict(imageData);
                     if (!detections || detections.length === 0) {
                         item.status = 'failed';
-                        statusEl.textContent = '未检测到水印';
+                        statusEl.textContent = '未检测到水印（建议手动修复）';
                         continue;
                     }
                     const result = await inpainter.inpaint(imageData, mask);
@@ -799,13 +799,61 @@
             }
 
             async predict(imageData) {
+                // Pass 1: full image detection
+                let result = await this._predictOnRegion(imageData, 0, 0, imageData.width, imageData.height);
+                if (result.detections.length > 0) return result;
+
+                // Pass 2: bottom-right 1/2 region (watermark usually at bottom-right)
+                const halfW = Math.floor(imageData.width / 2);
+                const halfH = Math.floor(imageData.height / 2);
+                result = await this._predictOnRegion(imageData, halfW, halfH, halfW, halfH);
+                if (result.detections.length > 0) return result;
+
+                // Pass 3: bottom-right 1/3 region with lower threshold
+                const oldThreshold = this.confidenceThreshold;
+                this.confidenceThreshold = 0.15;
+                const thirdW = Math.floor(imageData.width / 3);
+                const thirdH = Math.floor(imageData.height / 3);
+                const x0 = imageData.width - thirdW;
+                const y0 = imageData.height - thirdH;
+                result = await this._predictOnRegion(imageData, x0, y0, thirdW, thirdH);
+                this.confidenceThreshold = oldThreshold;
+                return result;
+            }
+
+            async _predictOnRegion(imageData, offsetX, offsetY, regionW, regionH) {
+                const regionImageData = this._cropRegion(imageData, offsetX, offsetY, regionW, regionH);
                 const session = state.yoloSession;
-                const preprocessInfo = this.letterbox(imageData, this.inputSize);
+                const preprocessInfo = this.letterbox(regionImageData, this.inputSize);
                 const tensor = imageDataToTensor(preprocessInfo.imageData, 'float32', [0, 0, 0], [1, 1, 1]);
                 const results = await session.run({ [session.inputNames[0]]: tensor });
-                const detections = this.postprocess(results, preprocessInfo);
-                const mask = createMaskFromDetections(detections, preprocessInfo.originalWidth, preprocessInfo.originalHeight);
+                let detections = this.postprocess(results, preprocessInfo);
+                // Map region-local coordinates back to full image coordinates
+                detections = detections.map(det => ({
+                    bbox: [
+                        det.bbox[0] + offsetX,
+                        det.bbox[1] + offsetY,
+                        det.bbox[2] + offsetX,
+                        det.bbox[3] + offsetY
+                    ],
+                    confidence: det.confidence,
+                    classId: det.classId
+                }));
+                const mask = createMaskFromDetections(detections, imageData.width, imageData.height);
                 return { detections, mask };
+            }
+
+            _cropRegion(imageData, x, y, w, h) {
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                const source = document.createElement('canvas');
+                source.width = imageData.width;
+                source.height = imageData.height;
+                source.getContext('2d').putImageData(imageData, 0, 0);
+                ctx.drawImage(source, x, y, w, h, 0, 0, w, h);
+                return ctx.getImageData(0, 0, w, h);
             }
 
             postprocess(results, preprocessInfo) {
@@ -1095,7 +1143,7 @@
                 const { detections, mask } = await detector.predict(state.originalImageData);
                 drawImageData(ui.autoMaskCanvas, mask);
                 if (detections.length === 0) {
-                    setStatus("未检测到水印");
+                    setStatus("未检测到水印，请切换到「手动修复」模式涂抹水印区域");
                     setCompareReady(false);
                     ui.downloadBtn.disabled = true;
                     return;

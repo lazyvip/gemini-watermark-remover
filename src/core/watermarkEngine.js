@@ -7,7 +7,7 @@
 import { calculateAlphaMap } from './alphaMap.js';
 import { removeWatermark } from './blendModes.js';
 import { cloneImageData } from '../utils.js';
-import { findBestWatermarkPosition, computeRegionSpatialCorrelation, computeRegionGradientCorrelation } from './adaptiveDetector.js';
+import { computeRegionSpatialCorrelation, computeRegionGradientCorrelation } from './adaptiveDetector.js';
 import {
     resolveGeminiWatermarkSearchConfigs,
     matchOfficialGeminiImageSize

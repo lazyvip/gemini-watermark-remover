@@ -181,8 +181,16 @@ async function processSingle(item) {
         downloadBtn.style.display = 'flex';
         downloadBtn.onclick = () => downloadImage(item);
 
+        const detection = result.__watermarkDetection || {};
+        item.detection = detection;
+        const detSize = detection.size || watermarkInfo.size;
+        const detX = detection.found ? detection.x : watermarkInfo.position.x;
+        const detY = detection.found ? detection.y : watermarkInfo.position.y;
+
         processedInfo.innerHTML = `
             <p>${i18n.t('info.size')}: ${img.width}×${img.height}</p>
+            <p>${i18n.t('info.watermark')}: ${detSize}×${detSize}</p>
+            <p>${i18n.t('info.position')}: (${detX},${detY})</p>
             <p>${i18n.t('info.status')}: ${i18n.t('info.removed')}</p>
         `;
 
@@ -245,11 +253,16 @@ async function processQueue() {
                 document.getElementById(`result-${item.id}`).src = item.processedUrl;
 
                 item.status = 'completed';
+                const detection = result.__watermarkDetection || {};
+                item.detection = detection;
                 const watermarkInfo = engine.getWatermarkInfo(item.originalImg.width, item.originalImg.height);
+                const detSize = detection.size || watermarkInfo.size;
+                const detX = detection.found ? detection.x : watermarkInfo.position.x;
+                const detY = detection.found ? detection.y : watermarkInfo.position.y;
 
                 updateStatus(item.id, `<p>${i18n.t('info.size')}: ${item.originalImg.width}×${item.originalImg.height}</p>
-            <p>${i18n.t('info.watermark')}: ${watermarkInfo.size}×${watermarkInfo.size}</p>
-            <p>${i18n.t('info.position')}: (${watermarkInfo.position.x},${watermarkInfo.position.y})</p>`, true);
+            <p>${i18n.t('info.watermark')}: ${detSize}×${detSize}</p>
+            <p>${i18n.t('info.position')}: (${detX},${detY})</p>`, true);
 
                 const downloadBtn = document.getElementById(`download-${item.id}`);
                 downloadBtn.classList.remove('hidden');
@@ -258,7 +271,7 @@ async function processQueue() {
                 processedCount++;
                 updateProgress();
 
-                checkOriginal(item.originalImg).then(({ is_google, is_original }) => {
+                checkOriginal(item.file).then(({ is_google, is_original }) => {
                     if (!is_google || !is_original) {
                         const status = getOriginalStatus({ is_google, is_original });
                         const statusEl = document.getElementById(`status-${item.id}`);
@@ -291,6 +304,52 @@ function updateProgress() {
 function updateDynamicTexts() {
     if (progressText.textContent) {
         updateProgress();
+    }
+
+    // Re-render single preview info panels
+    if (singlePreview.style.display !== 'none' && imageQueue.length > 0) {
+        const item = imageQueue[0];
+        if (item.originalImg) {
+            const watermarkInfo = engine.getWatermarkInfo(item.originalImg.width, item.originalImg.height);
+            originalInfo.innerHTML = `
+                <p>${i18n.t('info.size')}: ${item.originalImg.width}×${item.originalImg.height}</p>
+                <p>${i18n.t('info.watermark')}: ${watermarkInfo.size}×${watermarkInfo.size}</p>
+                <p>${i18n.t('info.position')}: (${watermarkInfo.position.x},${watermarkInfo.position.y})</p>
+            `;
+        }
+        if (item.detection && item.originalImg) {
+            const watermarkInfo = engine.getWatermarkInfo(item.originalImg.width, item.originalImg.height);
+            const detSize = item.detection.size || watermarkInfo.size;
+            const detX = item.detection.found ? item.detection.x : watermarkInfo.position.x;
+            const detY = item.detection.found ? item.detection.y : watermarkInfo.position.y;
+            processedInfo.innerHTML = `
+                <p>${i18n.t('info.size')}: ${item.originalImg.width}×${item.originalImg.height}</p>
+                <p>${i18n.t('info.watermark')}: ${detSize}×${detSize}</p>
+                <p>${i18n.t('info.position')}: (${detX},${detY})</p>
+                <p>${i18n.t('info.status')}: ${i18n.t('info.removed')}</p>
+            `;
+        }
+    }
+
+    // Re-render multi preview card statuses
+    if (multiPreview.style.display !== 'none') {
+        imageQueue.forEach(item => {
+            if (item.status === 'completed' && item.originalImg) {
+                const watermarkInfo = engine.getWatermarkInfo(item.originalImg.width, item.originalImg.height);
+                const detSize = item.detection?.size || watermarkInfo.size;
+                const detX = item.detection?.found ? item.detection.x : watermarkInfo.position.x;
+                const detY = item.detection?.found ? item.detection.y : watermarkInfo.position.y;
+                updateStatus(item.id, `<p>${i18n.t('info.size')}: ${item.originalImg.width}×${item.originalImg.height}</p>
+            <p>${i18n.t('info.watermark')}: ${detSize}×${detSize}</p>
+            <p>${i18n.t('info.position')}: (${detX},${detY})</p>`, true);
+            } else if (item.status === 'pending') {
+                updateStatus(item.id, i18n.t('status.pending'));
+            } else if (item.status === 'processing') {
+                updateStatus(item.id, i18n.t('status.processing'));
+            } else if (item.status === 'error') {
+                updateStatus(item.id, i18n.t('status.failed'));
+            }
+        });
     }
 }
 
