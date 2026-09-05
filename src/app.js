@@ -25,7 +25,7 @@ const originalInfo = document.getElementById('originalInfo');
 const processedInfo = document.getElementById('processedInfo');
 const downloadBtn = document.getElementById('downloadBtn');
 const resetBtn = document.getElementById('resetBtn');
-const promoTargetUrl = 'https://lazyso.com/labs/?from=watermark_widget';
+const promoTargetUrl = 'https://lazyso.com/labs/?from=watermark_widget&tool=watermark';
 
 function triggerLazyPromo(targetUrl = promoTargetUrl) {
     if (typeof window.showLazyPromo !== 'function') return;

@@ -23,7 +23,7 @@ createApp({
         const processProgress = ref(0);
         const processedPdfUrl = ref(null);
         const downloadName = ref('');
-        const promoTargetUrl = 'https://lazyso.com/labs/?from=watermark_widget';
+        const promoTargetUrl = 'https://lazyso.com/labs/?from=watermark_widget&tool=notebooklm';
 
         const triggerLazyPromo = (targetUrl = promoTargetUrl) => {
             if (typeof window.showLazyPromo !== 'function') return;
