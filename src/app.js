@@ -1,6 +1,7 @@
 import { WatermarkEngine } from './core/watermarkEngine.js';
 import i18n from './i18n.js';
 import { loadImage, checkOriginal, getOriginalStatus, setStatusMessage, showLoading, hideLoading } from './utils.js';
+import { canvasToBlob } from './core/canvasBlob.js';
 import JSZip from 'jszip';
 import mediumZoom from 'medium-zoom';
 
@@ -172,7 +173,7 @@ async function processSingle(item) {
         `;
 
         const result = await engine.removeWatermarkFromImage(img);
-        const blob = await new Promise(resolve => result.toBlob(resolve, 'image/png'));
+        const blob = await canvasToBlob(result, 'image/png');
         item.processedBlob = blob;
 
         item.processedUrl = URL.createObjectURL(blob);
@@ -181,7 +182,14 @@ async function processSingle(item) {
         downloadBtn.style.display = 'flex';
         downloadBtn.onclick = () => downloadImage(item);
 
-        const detection = result.__watermarkDetection || {};
+        // 上游 v1.0.41 管线把检测信息放在 __watermarkMeta；旧字段 __watermarkDetection 保留兜底
+        const meta = result.__watermarkMeta || result.__watermarkDetection || {};
+        const detection = {
+            found: meta.found ?? meta.detected ?? meta.presence?.detected ?? true,
+            size: meta.size ?? meta.config?.size ?? watermarkInfo.size,
+            x: meta.x ?? meta.position?.x ?? watermarkInfo.position.x,
+            y: meta.y ?? meta.position?.y ?? watermarkInfo.position.y,
+        };
         item.detection = detection;
         const detSize = detection.size || watermarkInfo.size;
         const detX = detection.found ? detection.x : watermarkInfo.position.x;
@@ -246,16 +254,22 @@ async function processQueue() {
 
             try {
                 const result = await engine.removeWatermarkFromImage(item.originalImg);
-                const blob = await new Promise(resolve => result.toBlob(resolve, 'image/png'));
+                const blob = await canvasToBlob(result, 'image/png');
                 item.processedBlob = blob;
 
                 item.processedUrl = URL.createObjectURL(blob);
                 document.getElementById(`result-${item.id}`).src = item.processedUrl;
 
                 item.status = 'completed';
-                const detection = result.__watermarkDetection || {};
-                item.detection = detection;
                 const watermarkInfo = engine.getWatermarkInfo(item.originalImg.width, item.originalImg.height);
+                const meta = result.__watermarkMeta || result.__watermarkDetection || {};
+                const detection = {
+                    found: meta.found ?? meta.detected ?? meta.presence?.detected ?? true,
+                    size: meta.size ?? meta.config?.size ?? watermarkInfo.size,
+                    x: meta.x ?? meta.position?.x ?? watermarkInfo.position.x,
+                    y: meta.y ?? meta.position?.y ?? watermarkInfo.position.y,
+                };
+                item.detection = detection;
                 const detSize = detection.size || watermarkInfo.size;
                 const detX = detection.found ? detection.x : watermarkInfo.position.x;
                 const detY = detection.found ? detection.y : watermarkInfo.position.y;
